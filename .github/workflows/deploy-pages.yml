@@ -28,8 +28,10 @@ jobs:
           SERVER_PID=$!
           trap 'kill $SERVER_PID' EXIT
           sleep 2
-          CHROME=$(command -v google-chrome || command -v chromium || command -v chromium-browser)
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=5000 --dump-dom http://127.0.0.1:4173/tests/image-smoke.html > /tmp/image-smoke.html
+          CHROME=$(command -v google-chrome-stable || command -v google-chrome || command -v chromium || command -v chromium-browser)
+          echo "Using browser: $CHROME"
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --virtual-time-budget=8000 --dump-dom http://127.0.0.1:4173/tests/image-smoke.html > /tmp/image-smoke.html
+          cat /tmp/image-smoke.html
           grep 'data-image-test="pass"' /tmp/image-smoke.html
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
