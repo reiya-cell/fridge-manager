@@ -126,7 +126,7 @@ results.push('14. 画像要素・画像通信・不要クレジット除去: PAS
 
 // 15: JavaScript実行前でもスマホに文字アイコンを表示し、旧キャッシュを回避。
 check((html.match(/class="category-pictogram"/g)||[]).length>=8,'初期カテゴリ8件がHTMLにありません');
-check(html.includes('styles.css?v=15')&&html.includes('app.js?v=17'),'CSS/JSのキャッシュ更新番号がありません');
+check(html.includes('styles.css?v=15')&&html.includes('app.js?v=18'),'CSS/JSのキャッシュ更新番号がありません');
 check(styles.includes('min-width:64px')&&styles.includes('grid-template-columns:repeat(2,1fr)'),'スマホ用アイコン幅または2列表示がありません');
 results.push('15. 初期文字アイコン・スマホ2列・キャッシュ更新: PASS');
 
@@ -143,7 +143,16 @@ check(!html.includes('占有容量（1単位）')&&!html.includes('容量単位'
 check(html.includes('<input id="volume" type="hidden"'),'内部容量値が保持されていません');
 check(!html.includes('id="volumeHint"'),'容量説明が画面に残っています');
 check(source.includes("$('#volume').value=food.liters"),'食材プリセット容量の内部設定がありません');
-check(html.includes('app.js?v=17'),'JavaScriptのキャッシュ更新番号がありません');
+check(html.includes('app.js?v=18'),'JavaScriptのキャッシュ更新番号がありません');
 results.push('17. 容量入力非表示・内部容量計算・キャッシュ更新: PASS');
+
+// 18: カテゴリへユーザー独自の食材を追加し、端末内へ保存。
+check(html.includes('id="customFoodForm"')&&html.includes('id="customFoodName"'),'カテゴリ食材の追加欄がありません');
+check(source.includes("localStorage.getItem('fridge-custom-foods')"),'追加食材の読み込みがありません');
+check(source.includes("localStorage.setItem('fridge-custom-foods'"),'追加食材の保存がありません');
+check(source.includes('function foodsForCategory(category)'),'標準食材と追加食材の統合がありません');
+check(source.includes('normalizeFoodText(food)===normalizeFoodText(name)'),'表記ゆれを考慮した重複防止がありません');
+check(html.includes('app.js?v=18'),'JavaScriptのキャッシュ更新番号がありません');
+results.push('18. カテゴリ食材追加・永続保存・重複防止: PASS');
 
 console.log(results.join('\n'));
