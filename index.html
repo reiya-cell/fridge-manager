@@ -8,7 +8,7 @@
   <title>わが家の冷蔵庫</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=22">
+  <link rel="stylesheet" href="styles.css?v=23">
 </head>
 <body>
   <aside class="sidebar">
@@ -34,11 +34,9 @@
       <form id="itemForm" class="card form-card">
         <div class="form-step active" data-step="1">
           <label for="itemName">食材名</label>
-          <div class="input-row add-methods"><input id="itemName" list="foodSuggestions" required autocomplete="off" placeholder="例：キャベツ、豚こま肉、しょうゆ"><button type="button" id="receiptButton" class="secondary">レシート・ラベルから入力</button><button type="button" id="barcodeButton" class="secondary">バーコードで追加</button></div>
+          <div class="input-row add-methods"><input id="itemName" list="foodSuggestions" required autocomplete="off" placeholder="例：キャベツ、豚こま肉、しょうゆ"><button type="button" id="barcodeButton" class="secondary">バーコードで追加</button></div>
           <button type="button" id="manualExpiryButton" class="expiry-shortcut">バーコードなしで期限を読み取る</button>
           <datalist id="foodSuggestions"></datalist>
-          <input id="imageInput" class="visually-hidden" type="file" accept="image/*" capture="environment">
-          <div id="imageAssistant" class="image-assistant receipt-assistant" hidden><img id="imagePreview" alt="選択したレシートまたは商品ラベル"><div><b>文字から入力</b><p id="imageStatus">文字を確認しています…</p><div id="imageCandidates" class="receipt-candidate-list"></div><div id="receiptActions" class="receipt-actions" hidden><button type="button" id="chooseAnotherImage" class="secondary">撮り直す</button><button type="button" id="addReceiptItems" class="primary">選択した食材の設定へ</button></div></div></div>
           <p class="hint">まずは手入力で登録します。名前から分類と期限の目安を提案します。</p>
           <div class="fields"><div><label for="quantity">数量</label><input id="quantity" type="number" value="1" min="0.1" step="0.1" required></div><div><label for="unit">単位</label><select id="unit"><option>個</option><option>本</option><option>パック</option><option>袋</option><option>L</option></select></div></div>
           <input id="volume" type="hidden" value="1">
@@ -86,19 +84,6 @@
     <div class="camera-header"><div><p class="eyebrow">EDIT ITEM</p><h2>登録内容を編集</h2></div><button type="button" id="closeEditItem" class="camera-close" aria-label="閉じる">×</button></div>
     <form id="editItemForm"><label for="editItemName">食材名</label><input id="editItemName" maxlength="50" required><div class="fields"><div><label for="editQuantity">数量</label><input id="editQuantity" type="number" min="0.1" step="0.1" required></div><div><label for="editUnit">単位</label><select id="editUnit"><option>個</option><option>本</option><option>パック</option><option>袋</option><option>L</option></select></div><div><label for="editStorage">保存状態</label><select id="editStorage"><option>冷蔵</option><option>冷凍</option></select></div><div><label for="editLocation">保管位置</label><select id="editLocation"></select></div><div class="edit-expiry"><label for="editExpiry">期限</label><input id="editExpiry" type="date" required></div></div><div class="edit-actions"><button type="button" id="cancelEditItem" class="secondary">キャンセル</button><button type="submit" class="primary">変更を保存</button></div></form>
   </dialog>
-  <dialog id="cameraDialog" class="camera-dialog">
-    <div class="camera-header"><div><span class="eyebrow">TEXT OCR</span><h2>レシート・商品ラベルを撮影</h2></div><button type="button" id="closeCamera" class="camera-close" aria-label="カメラを閉じる">×</button></div>
-    <p id="cameraStatus" class="camera-status">カメラを準備しています。</p>
-    <div class="camera-stage"><video id="cameraVideo" autoplay playsinline muted></video><canvas id="cameraCanvas" hidden></canvas></div>
-    <div class="camera-actions"><button type="button" id="fallbackImage" class="secondary">画像を選ぶ</button><button type="button" id="takePhoto" class="primary camera-shutter" disabled>撮影する</button></div>
-    <p class="camera-note">画像はこの端末内で文字認識し、外部AIには送信しません。</p>
-  </dialog>
-  <dialog id="receiptSetupDialog" class="setup-dialog">
-    <div class="camera-header"><div><span id="receiptSetupProgress" class="eyebrow"></span><h2 id="receiptSetupName">保存場所を設定</h2></div><button type="button" id="closeReceiptSetup" class="camera-close" aria-label="設定を閉じる">×</button></div>
-    <p class="hint">食材ごとに保存状態と収納場所を決めます。</p>
-    <div class="fields"><div><label for="receiptStorage">保存状態</label><select id="receiptStorage"><option value="冷蔵">冷蔵</option><option value="冷凍">冷凍</option></select></div><div><label for="receiptLocation">収納場所</label><select id="receiptLocation"></select></div></div>
-    <div class="actions"><button type="button" id="previousReceiptItem" class="secondary">前へ</button><button type="button" id="nextReceiptItem" class="primary">次へ</button></div>
-  </dialog>
   <dialog id="barcodeDialog" class="camera-dialog barcode-dialog">
     <div class="camera-header"><div><span id="barcodeDialogEyebrow" class="eyebrow">JAN / EAN</span><h2 id="barcodeDialogTitle">バーコードで追加</h2></div><button type="button" id="closeBarcode" class="camera-close" aria-label="登録画面を閉じる">×</button></div>
     <p id="barcodeStatus" class="camera-status">カメラを準備しています。</p>
@@ -116,6 +101,6 @@
     <p class="camera-note">45または49から始まる日本向けJANコードのみ対応します。海外製品は対象外です。</p>
   </dialog>
   <div id="toast" role="status"></div>
-  <script src="app.js?v=21"></script>
+  <script src="app.js?v=23"></script>
 </body>
 </html>
