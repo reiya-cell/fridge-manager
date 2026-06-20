@@ -32,6 +32,7 @@ results.push('3. カメラ・HTTPS/PWA・許可拒否分岐: PASS');
 
 // 4: 公開後フィードバック（マップ追加導線とレシートOCR）。
 const html=await readFile(new URL('../index.html',import.meta.url),'utf8');
+const styles=await readFile(new URL('../styles.css',import.meta.url),'utf8');
 check(html.includes('id="addToSelectedRoom"'),'マップから追加するボタンがありません');
 check(source.includes("pendingLocation=activeMapLocations.length===1"),'選択区画の引き継ぎがありません');
 check(source.includes("Tesseract.recognize(url,'jpn+eng'"),'日本語レシートOCRがありません');
@@ -122,5 +123,12 @@ check(!source.includes('<img class="category-pictogram"'),'カテゴリ画像が
 check(!source.includes('<img class="food-pictogram"'),'食材画像が残っています');
 check(!html.includes('イラスト：'),'不要な画像クレジットが残っています');
 results.push('14. 画像要素・画像通信・不要クレジット除去: PASS');
+
+// 15: JavaScript実行前でもスマホに文字アイコンを表示し、旧キャッシュを回避。
+check((html.match(/class="category-pictogram"/g)||[]).length>=8,'初期カテゴリ8件がHTMLにありません');
+check((html.match(/class="food-pictogram"/g)||[]).length>=4,'初期食材4件がHTMLにありません');
+check(html.includes('styles.css?v=14')&&html.includes('app.js?v=14'),'CSS/JSのキャッシュ更新番号がありません');
+check(styles.includes('min-width:64px')&&styles.includes('grid-template-columns:repeat(2,1fr)'),'スマホ用アイコン幅または2列表示がありません');
+results.push('15. 初期文字アイコン・スマホ2列・キャッシュ更新: PASS');
 
 console.log(results.join('\n'));
