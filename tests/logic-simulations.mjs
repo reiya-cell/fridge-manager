@@ -99,15 +99,15 @@ check(source.includes("['肉類','魚介類'].includes(category)?'消費期限':
 check(source.includes('if(pendingBarcode)saveBarcodeProduct'),'バーコードなしの空キャッシュ保存を防いでいません');
 results.push('11. 手入力→期限ライブ読取・肉魚の消費期限初期値: PASS');
 
-// 12: よく買うもの＋カテゴリの推奨画面。
-check(html.includes('id="favoriteFoods"'),'よく買うもの欄がありません');
+// 12: カテゴリ中心のシンプルな選択画面。
+check(!html.includes('id="favoriteFoods"')&&!html.includes('よく買うもの'),'よく買うもの欄が残っています');
 check(html.includes('id="categoryGrid"'),'カテゴリ選択欄がありません');
 check(source.includes('const QUICK_CATEGORIES'),'カテゴリ定義がありません');
 check(source.includes('function renderQuickPicker'),'アイコン画面の描画処理がありません');
-check(source.includes("sort((a,b)=>b[1]-a[1]).slice(0,6)"),'購入履歴による並べ替えがありません');
+check(!source.includes('const favorites=')&&!source.includes('const counts=new Map()'),'不要な購入履歴集計が残っています');
 check(source.includes("setTimeout(()=>$('#quantity').focus()"),'食材選択後に数量へ進みません');
 check(source.includes("name:'さば'")&&source.includes("name:'りんご'"),'魚・果物の代表食材が不足しています');
-results.push('12. よく買うもの・カテゴリ・アイコン選択・履歴最適化: PASS');
+results.push('12. よく買うもの削除・カテゴリ選択・履歴集計削除: PASS');
 
 // 13: 通信不要の文字アイコンと最大3文字のカテゴリ表示。
 check(source.includes("mark:'肉類'")&&source.includes("mark:'調味料'"),'カテゴリ文字が不足しています');
@@ -126,8 +126,7 @@ results.push('14. 画像要素・画像通信・不要クレジット除去: PAS
 
 // 15: JavaScript実行前でもスマホに文字アイコンを表示し、旧キャッシュを回避。
 check((html.match(/class="category-pictogram"/g)||[]).length>=8,'初期カテゴリ8件がHTMLにありません');
-check((html.match(/class="food-pictogram"/g)||[]).length>=4,'初期食材4件がHTMLにありません');
-check(html.includes('styles.css?v=15')&&html.includes('app.js?v=16'),'CSS/JSのキャッシュ更新番号がありません');
+check(html.includes('styles.css?v=15')&&html.includes('app.js?v=17'),'CSS/JSのキャッシュ更新番号がありません');
 check(styles.includes('min-width:64px')&&styles.includes('grid-template-columns:repeat(2,1fr)'),'スマホ用アイコン幅または2列表示がありません');
 results.push('15. 初期文字アイコン・スマホ2列・キャッシュ更新: PASS');
 
@@ -144,7 +143,7 @@ check(!html.includes('占有容量（1単位）')&&!html.includes('容量単位'
 check(html.includes('<input id="volume" type="hidden"'),'内部容量値が保持されていません');
 check(!html.includes('id="volumeHint"'),'容量説明が画面に残っています');
 check(source.includes("$('#volume').value=food.liters"),'食材プリセット容量の内部設定がありません');
-check(html.includes('app.js?v=16'),'JavaScriptのキャッシュ更新番号がありません');
+check(html.includes('app.js?v=17'),'JavaScriptのキャッシュ更新番号がありません');
 results.push('17. 容量入力非表示・内部容量計算・キャッシュ更新: PASS');
 
 console.log(results.join('\n'));
