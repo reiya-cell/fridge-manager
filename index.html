@@ -8,7 +8,7 @@
   <title>わが家の冷蔵庫</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=23">
+  <link rel="stylesheet" href="styles.css?v=24">
 </head>
 <body>
   <aside class="sidebar">
@@ -35,7 +35,6 @@
         <div class="form-step active" data-step="1">
           <label for="itemName">食材名</label>
           <div class="input-row add-methods"><input id="itemName" list="foodSuggestions" required autocomplete="off" placeholder="例：キャベツ、豚こま肉、しょうゆ"><button type="button" id="barcodeButton" class="secondary">バーコードで追加</button></div>
-          <button type="button" id="manualExpiryButton" class="expiry-shortcut">バーコードなしで期限を読み取る</button>
           <datalist id="foodSuggestions"></datalist>
           <p class="hint">まずは手入力で登録します。名前から分類と期限の目安を提案します。</p>
           <div class="fields"><div><label for="quantity">数量</label><input id="quantity" type="number" value="1" min="0.1" step="0.1" required></div><div><label for="unit">単位</label><select id="unit"><option>個</option><option>本</option><option>パック</option><option>袋</option><option>L</option></select></div></div>
@@ -50,7 +49,7 @@
         <div class="form-step" data-step="3">
           <p class="label">冷蔵庫のどこに追加しますか？</p>
           <div id="locationChoices" class="location-grid"></div>
-          <div class="fields"><div><label for="purchaseDate">購入日</label><input id="purchaseDate" type="date" required></div><div><label for="expiryDate">期限（目安）</label><input id="expiryDate" type="date" required></div></div>
+          <div class="fields"><div><label for="purchaseDate">購入日</label><input id="purchaseDate" type="date" required></div><div><label for="expiryDate">期限（目安）</label><input id="expiryDate" type="date" required><button type="button" id="manualExpiryButton" class="expiry-shortcut">期限をカメラで読み取る</button></div></div>
           <p id="expiryHint" class="hint"></p>
           <div class="actions"><button type="button" class="secondary back">戻る</button><button type="submit" class="primary">冷蔵庫に追加する</button></div>
         </div>
