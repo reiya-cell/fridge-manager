@@ -1,0 +1,4 @@
+.vs/
+tests/edge-profile*/
+tests/simulation-output.html
+tests/simulation-error.txt

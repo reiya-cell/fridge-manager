@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#183c32">
+  <meta name="description" content="MR-JW52TJ向けの家庭用食材・期限管理ツール">
+  <title>わが家の冷蔵庫</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><span class="brand-mark">冷</span><div><strong>わが家の冷蔵庫</strong><small>MR-JW52TJ / 517L</small></div></div>
+    <nav>
+      <button class="nav active" data-view="add">＋ 食材を追加</button>
+      <button class="nav" data-view="inventory">▦ 冷蔵庫の中身 <span id="itemCount" class="badge">0</span></button>
+      <button class="nav" data-view="alerts">◷ 期限リマインド <span id="alertCount" class="badge warning">0</span></button>
+    </nav>
+    <div class="capacity"><div class="capacity-title"><span>使用容量（目安）</span><b id="capacityText">0 / 517 L</b></div><div class="meter"><span id="capacityBar"></span></div><small>登録量からの概算です</small></div>
+  </aside>
+
+  <main>
+    <header><div><p class="eyebrow">FRIDGE ASSISTANT</p><h1 id="pageTitle">何を追加しますか？</h1></div><div class="today" id="today"></div></header>
+
+    <section id="addView" class="view active">
+      <div class="steps"><span class="step current">1 食材</span><i></i><span class="step">2 保存状態</span><i></i><span class="step">3 場所</span></div>
+      <form id="itemForm" class="card form-card">
+        <div class="form-step active" data-step="1">
+          <label for="itemName">食材名</label>
+          <div class="input-row"><input id="itemName" list="foodSuggestions" required autocomplete="off" placeholder="例：キャベツ、豚こま肉、牛乳"><button type="button" id="receiptButton" class="secondary">写真から入力</button></div>
+          <datalist id="foodSuggestions"></datalist>
+          <input id="imageInput" class="visually-hidden" type="file" accept="image/*" capture="environment">
+          <div id="imageAssistant" class="image-assistant" hidden><img id="imagePreview" alt="選択した写真"><div><b>画像入力アシスタント</b><p id="imageStatus">画像を確認しています…</p><div id="imageCandidates" class="candidate-list"></div><button type="button" id="chooseAnotherImage" class="text-button">別の写真を選ぶ</button></div></div>
+          <p class="hint">まずは手入力で登録します。名前から分類と期限の目安を提案します。</p>
+          <div class="fields"><div><label for="quantity">数量</label><input id="quantity" type="number" value="1" min="0.1" step="0.1" required></div><div><label for="unit">単位</label><select id="unit"><option>個</option><option>本</option><option>パック</option><option>袋</option><option>L</option></select></div><div><label for="volume">占有容量（1単位）</label><input id="volume" type="number" value="1" min="0.1" step="0.1" required></div><div><label for="volumeUnit">容量単位</label><input id="volumeUnit" value="L" disabled></div></div>
+          <p id="volumeHint" class="hint">食材名から一般的な包装サイズを提案します。実物に合わせて修正できます。</p>
+          <button type="button" class="primary next">次へ</button>
+        </div>
+        <div class="form-step" data-step="2">
+          <p class="label">保存状態を選んでください</p>
+          <div class="choice-grid"><label class="choice"><input type="radio" name="storage" value="冷蔵" checked><span>❄<b>冷蔵</b><small>冷蔵室・野菜室など</small></span></label><label class="choice"><input type="radio" name="storage" value="冷凍"><span>◇<b>冷凍</b><small>冷凍室・切替室など</small></span></label></div>
+          <div class="actions"><button type="button" class="secondary back">戻る</button><button type="button" class="primary next">次へ</button></div>
+        </div>
+        <div class="form-step" data-step="3">
+          <p class="label">冷蔵庫のどこに追加しますか？</p>
+          <div id="locationChoices" class="location-grid"></div>
+          <div class="fields"><div><label for="purchaseDate">購入日</label><input id="purchaseDate" type="date" required></div><div><label for="expiryDate">期限（目安）</label><input id="expiryDate" type="date" required></div></div>
+          <p id="expiryHint" class="hint"></p>
+          <div class="actions"><button type="button" class="secondary back">戻る</button><button type="submit" class="primary">冷蔵庫に追加する</button></div>
+        </div>
+      </form>
+      <div class="tip"><b>はじめての方へ</b><p>食材名 → 保存状態 → 入れた場所の順に選ぶだけです。登録内容はこのブラウザ内に保存されます。</p></div>
+    </section>
+
+    <section id="inventoryView" class="view">
+      <div class="inventory-layout">
+        <div class="fridge-panel">
+          <div class="fridge-heading"><div><span class="eyebrow">MR-JW52TJ</span><h2>冷蔵庫マップ</h2></div><button type="button" id="clearLocation" class="text-button">全室を表示</button></div>
+          <p class="map-help">見たい場所を押すと、右の食材一覧を絞り込めます。</p>
+          <div id="fridgeMap" class="fridge-map" aria-label="MR-JW52TJ 冷蔵庫内の配置図">
+            <div class="fridge-top">
+              <button class="compartment fridge-door left" data-map-location="refrigerator-upper,refrigerator-middle,refrigerator-lower"><span class="door-handle"></span><b>冷蔵室</b><small>上段・中段・下段</small><span class="map-items" data-map-items="refrigerator-upper,refrigerator-middle,refrigerator-lower"></span></button>
+              <button class="compartment fridge-door right" data-map-location="door"><span class="door-handle"></span><b>ドアポケット</b><small>飲み物・調味料</small><span class="map-items" data-map-items="door"></span></button>
+            </div>
+            <div class="fridge-pair"><button class="compartment drawer" data-map-location="ice"><b>製氷室</b><span class="map-items" data-map-items="ice"></span></button><button class="compartment drawer" data-map-location="switch"><b>切替室</b><span class="map-items" data-map-items="switch"></span></button></div>
+            <button class="compartment drawer freezer-room" data-map-location="freezer"><b>冷凍室</b><small>89L</small><span class="map-items" data-map-items="freezer"></span></button>
+            <button class="compartment drawer vegetable-room" data-map-location="vegetable"><b>野菜室</b><small>98L</small><span class="map-items" data-map-items="vegetable"></span></button>
+          </div>
+          <p class="model-note">MR-JW52TJの収納室構成をもとにした模式図です。</p>
+        </div>
+        <div class="inventory-content"><div class="toolbar"><input id="searchInput" placeholder="食材を検索"><select id="filterLocation"><option value="">すべての場所</option></select></div><p id="inventorySummary" class="inventory-summary"></p><div id="inventoryList" class="inventory-grid"></div></div>
+      </div>
+    </section>
+    <section id="alertsView" class="view"><div id="alertList" class="inventory-grid"></div></section>
+  </main>
+  <dialog id="cameraDialog" class="camera-dialog">
+    <div class="camera-header"><div><span class="eyebrow">CAMERA</span><h2>食材・レシートを撮影</h2></div><button type="button" id="closeCamera" class="camera-close" aria-label="カメラを閉じる">×</button></div>
+    <p id="cameraStatus" class="camera-status">カメラを準備しています。</p>
+    <div class="camera-stage"><video id="cameraVideo" autoplay playsinline muted></video><canvas id="cameraCanvas" hidden></canvas></div>
+    <div class="camera-actions"><button type="button" id="fallbackImage" class="secondary">画像を選ぶ</button><button type="button" id="takePhoto" class="primary camera-shutter" disabled>撮影する</button></div>
+    <p class="camera-note">写真はこの端末内で処理され、現在のテスト版では外部へ送信されません。</p>
+  </dialog>
+  <div id="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>

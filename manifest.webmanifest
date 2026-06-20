@@ -1,0 +1,12 @@
+{
+  "name": "わが家の冷蔵庫",
+  "short_name": "冷蔵庫管理",
+  "description": "MR-JW52TJ向けの家庭用食材・期限管理ツール",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f5ef",
+  "theme_color": "#183c32",
+  "icons": [{"src":"icons/app-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
