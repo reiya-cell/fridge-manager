@@ -25,6 +25,12 @@
     <header><div><p class="eyebrow">FRIDGE ASSISTANT</p><h1 id="pageTitle">何を追加しますか？</h1></div><div class="today" id="today"></div></header>
 
     <section id="addView" class="view active">
+      <section class="quick-picker" aria-labelledby="quickPickerTitle">
+        <div class="quick-heading"><div><p class="eyebrow">QUICK SELECT</p><h2 id="quickPickerTitle">アイコンから選ぶ</h2></div><button type="button" id="showManualEntry" class="text-button">名前を手入力</button></div>
+        <div class="quick-section"><h3>よく買うもの</h3><div id="favoriteFoods" class="food-icon-grid"></div></div>
+        <div class="quick-section"><h3>カテゴリ</h3><div id="categoryGrid" class="category-icon-grid"></div></div>
+        <div id="categoryFoodsPanel" class="category-foods-panel" hidden><div class="category-panel-heading"><h3 id="selectedCategoryName"></h3><button type="button" id="closeCategoryFoods" class="text-button">閉じる</button></div><div id="categoryFoods" class="food-icon-grid"></div></div>
+      </section>
       <div class="steps"><span class="step current">1 食材</span><i></i><span class="step">2 保存状態</span><i></i><span class="step">3 場所</span></div>
       <form id="itemForm" class="card form-card">
         <div class="form-step active" data-step="1">

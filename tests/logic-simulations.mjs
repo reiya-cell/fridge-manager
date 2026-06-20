@@ -98,4 +98,14 @@ check(source.includes("['肉類','魚介類'].includes(category)?'消費期限':
 check(source.includes('if(pendingBarcode)saveBarcodeProduct'),'バーコードなしの空キャッシュ保存を防いでいません');
 results.push('11. 手入力→期限ライブ読取・肉魚の消費期限初期値: PASS');
 
+// 12: よく買うもの＋カテゴリの推奨画面。
+check(html.includes('id="favoriteFoods"'),'よく買うもの欄がありません');
+check(html.includes('id="categoryGrid"'),'カテゴリ選択欄がありません');
+check(source.includes('const QUICK_CATEGORIES'),'カテゴリ定義がありません');
+check(source.includes('function renderQuickPicker'),'アイコン画面の描画処理がありません');
+check(source.includes("sort((a,b)=>b[1]-a[1]).slice(0,6)"),'購入履歴による並べ替えがありません');
+check(source.includes("setTimeout(()=>$('#quantity').focus()"),'食材選択後に数量へ進みません');
+check(source.includes("name:'さば'")&&source.includes("name:'りんご'"),'魚・果物の代表食材が不足しています');
+results.push('12. よく買うもの・カテゴリ・アイコン選択・履歴最適化: PASS');
+
 console.log(results.join('\n'));
