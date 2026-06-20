@@ -97,10 +97,10 @@
     <button type="button" id="manualBarcodeProduct" class="secondary full-button" hidden>商品名を手入力する</button></div>
     <section id="barcodeExpiryStep" class="barcode-expiry-step" hidden>
       <p class="step-label">商品を確認</p><label for="barcodeProductName">商品名</label><input id="barcodeProductName" autocomplete="off" placeholder="商品名を入力">
-      <p class="step-label">期限表示を撮影</p><input id="expiryImageInput" class="visually-hidden" type="file" accept="image/*" capture="environment"><img id="expiryPreview" class="expiry-preview" alt="撮影した期限表示" hidden>
-      <button type="button" id="expiryCameraButton" class="secondary full-button">消費・賞味期限を撮影</button>
+      <p class="step-label">期限表示を読み取り</p><div class="camera-stage expiry-live-stage"><video id="expiryVideo" autoplay playsinline muted></video><canvas id="expiryCanvas" hidden></canvas><div class="expiry-guide"><span>期限表示を枠内へ</span></div></div>
+      <button type="button" id="expiryCameraButton" class="secondary full-button" disabled>期限を読み取る</button>
       <div class="fields"><div><label for="expiryKind">期限の種類</label><select id="expiryKind"><option>賞味期限</option><option>消費期限</option></select></div><div><label for="barcodeExpiryDate">読み取った期限</label><input id="barcodeExpiryDate" type="date"></div></div>
-      <p id="expiryOcrStatus" class="hint">日付は撮影後に確認・修正できます。</p><div id="expiryDateCandidates" class="expiry-date-candidates"></div>
+      <p id="expiryOcrStatus" class="hint">カメラを期限表示へ向けて「期限を読み取る」を押してください。</p><div id="expiryDateCandidates" class="expiry-date-candidates"></div>
       <button type="button" id="confirmBarcodeProduct" class="primary full-button">追加設定へ進む</button>
     </section>
     <p class="camera-note">45または49から始まる日本向けJANコードのみ対応します。海外製品は対象外です。</p>
