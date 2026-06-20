@@ -127,8 +127,16 @@ results.push('14. 画像要素・画像通信・不要クレジット除去: PAS
 // 15: JavaScript実行前でもスマホに文字アイコンを表示し、旧キャッシュを回避。
 check((html.match(/class="category-pictogram"/g)||[]).length>=8,'初期カテゴリ8件がHTMLにありません');
 check((html.match(/class="food-pictogram"/g)||[]).length>=4,'初期食材4件がHTMLにありません');
-check(html.includes('styles.css?v=14')&&html.includes('app.js?v=14'),'CSS/JSのキャッシュ更新番号がありません');
+check(html.includes('styles.css?v=15')&&html.includes('app.js?v=15'),'CSS/JSのキャッシュ更新番号がありません');
 check(styles.includes('min-width:64px')&&styles.includes('grid-template-columns:repeat(2,1fr)'),'スマホ用アイコン幅または2列表示がありません');
 results.push('15. 初期文字アイコン・スマホ2列・キャッシュ更新: PASS');
+
+// 16: カテゴリ選択を見える変化にし、再描画後もイベント委譲で操作。
+check(source.includes('function openQuickCategory(id)'),'カテゴリを開く処理がありません');
+check(source.includes("button.classList.toggle('selected'"),'選択カテゴリの強調表示がありません');
+check(source.includes("panel.scrollIntoView({behavior:'smooth'"),'カテゴリ食材への自動スクロールがありません');
+check(source.includes("$('#categoryGrid').onclick=event=>"),'カテゴリ操作のイベント委譲がありません');
+check(source.includes("$('#categoryFoods').onclick=event=>"),'カテゴリ内食材のイベント委譲がありません');
+results.push('16. カテゴリ選択色・自動スクロール・再描画後操作: PASS');
 
 console.log(results.join('\n'));
