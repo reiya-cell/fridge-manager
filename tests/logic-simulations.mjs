@@ -126,7 +126,7 @@ results.push('14. 画像要素・画像通信・不要クレジット除去: PAS
 
 // 15: JavaScript実行前でもスマホに文字アイコンを表示し、旧キャッシュを回避。
 check((html.match(/class="category-pictogram"/g)||[]).length>=8,'初期カテゴリ8件がHTMLにありません');
-check(html.includes('styles.css?v=21')&&html.includes('app.js?v=21'),'CSS/JSのキャッシュ更新番号がありません');
+check(html.includes('styles.css?v=22')&&html.includes('app.js?v=21'),'CSS/JSのキャッシュ更新番号がありません');
 check(styles.includes('min-width:64px')&&styles.includes('grid-template-columns:repeat(2,1fr)'),'スマホ用アイコン幅または2列表示がありません');
 results.push('15. 初期文字アイコン・スマホ2列・キャッシュ更新: PASS');
 
@@ -179,5 +179,13 @@ check(source.includes("volumeLiters:preset.liters"),'食材名変更後の内部
 check(source.includes("$('#editItemDialog').close()"),'編集完了後に画面が閉じません');
 check(html.includes('app.js?v=21'),'JavaScriptのキャッシュ更新番号がありません');
 results.push('20. 在庫内容・保存状態・保管位置・期限編集: PASS');
+
+// 21: スマホ編集画面を2列・低余白で1画面に収める。
+check(styles.includes('.edit-item-dialog{width:min(500px'),'編集画面のコンパクト幅がありません');
+check(styles.includes('max-height:calc(100dvh - 20px)'),'スマホ画面高への制限がありません');
+check(styles.includes('.edit-item-dialog .fields{grid-template-columns:1fr 1fr'),'編集項目が2列になっていません');
+check(styles.includes('.edit-item-dialog input,.edit-item-dialog select{padding:8px 10px}'),'入力欄がコンパクトではありません');
+check(html.includes('styles.css?v=22'),'CSSのキャッシュ更新番号がありません');
+results.push('21. スマホ編集画面・2列・コンパクト表示: PASS');
 
 console.log(results.join('\n'));
