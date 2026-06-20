@@ -29,10 +29,10 @@
       <form id="itemForm" class="card form-card">
         <div class="form-step active" data-step="1">
           <label for="itemName">食材名</label>
-          <div class="input-row"><input id="itemName" list="foodSuggestions" required autocomplete="off" placeholder="例：キャベツ、豚こま肉、牛乳"><button type="button" id="receiptButton" class="secondary">写真から入力</button></div>
+          <div class="input-row"><input id="itemName" list="foodSuggestions" required autocomplete="off" placeholder="例：キャベツ、豚こま肉、牛乳"><button type="button" id="receiptButton" class="secondary">レシートから一括入力</button></div>
           <datalist id="foodSuggestions"></datalist>
           <input id="imageInput" class="visually-hidden" type="file" accept="image/*" capture="environment">
-          <div id="imageAssistant" class="image-assistant" hidden><img id="imagePreview" alt="選択した写真"><div><b>画像入力アシスタント</b><p id="imageStatus">画像を確認しています…</p><div id="imageCandidates" class="candidate-list"></div><button type="button" id="chooseAnotherImage" class="text-button">別の写真を選ぶ</button></div></div>
+          <div id="imageAssistant" class="image-assistant receipt-assistant" hidden><img id="imagePreview" alt="選択したレシート"><div><b>レシート一括入力</b><p id="imageStatus">文字を確認しています…</p><div id="imageCandidates" class="receipt-candidate-list"></div><div id="receiptActions" class="receipt-actions" hidden><button type="button" id="chooseAnotherImage" class="secondary">撮り直す</button><button type="button" id="addReceiptItems" class="primary">選択した食材を一括追加</button></div></div></div>
           <p class="hint">まずは手入力で登録します。名前から分類と期限の目安を提案します。</p>
           <div class="fields"><div><label for="quantity">数量</label><input id="quantity" type="number" value="1" min="0.1" step="0.1" required></div><div><label for="unit">単位</label><select id="unit"><option>個</option><option>本</option><option>パック</option><option>袋</option><option>L</option></select></div><div><label for="volume">占有容量（1単位）</label><input id="volume" type="number" value="1" min="0.1" step="0.1" required></div><div><label for="volumeUnit">容量単位</label><input id="volumeUnit" value="L" disabled></div></div>
           <p id="volumeHint" class="hint">食材名から一般的な包装サイズを提案します。実物に合わせて修正できます。</p>
@@ -77,11 +77,11 @@
     <section id="alertsView" class="view"><div id="alertList" class="inventory-grid"></div></section>
   </main>
   <dialog id="cameraDialog" class="camera-dialog">
-    <div class="camera-header"><div><span class="eyebrow">CAMERA</span><h2>食材・レシートを撮影</h2></div><button type="button" id="closeCamera" class="camera-close" aria-label="カメラを閉じる">×</button></div>
+    <div class="camera-header"><div><span class="eyebrow">RECEIPT OCR</span><h2>レシートを撮影</h2></div><button type="button" id="closeCamera" class="camera-close" aria-label="カメラを閉じる">×</button></div>
     <p id="cameraStatus" class="camera-status">カメラを準備しています。</p>
     <div class="camera-stage"><video id="cameraVideo" autoplay playsinline muted></video><canvas id="cameraCanvas" hidden></canvas></div>
     <div class="camera-actions"><button type="button" id="fallbackImage" class="secondary">画像を選ぶ</button><button type="button" id="takePhoto" class="primary camera-shutter" disabled>撮影する</button></div>
-    <p class="camera-note">写真はこの端末内で処理され、現在のテスト版では外部へ送信されません。</p>
+    <p class="camera-note">レシート画像はこの端末内で文字認識し、外部AIには送信しません。</p>
   </dialog>
   <div id="toast" role="status"></div>
   <script src="app.js"></script>
