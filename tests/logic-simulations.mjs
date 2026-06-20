@@ -52,7 +52,13 @@ check(source.includes('receiptQueueIndex++'),'レシート候補を1件ずつ進
 check(html.includes('id="barcodeButton"'),'バーコード追加ボタンがありません');
 check(source.includes('BarcodeDetector'),'ブラウザ標準バーコード読取がありません');
 check(source.includes('BrowserMultiFormatReader'),'非対応端末向けバーコード読取がありません');
-check(source.includes('world.openfoodfacts.org/api/v2/product'),'無料商品検索がありません');
+check(source.includes('openfoodfacts.org/api/v2/product'),'無料商品検索がありません');
 results.push('6. レシート順次設定・バーコード読取・単品追加: PASS');
+
+// 7: バーコードを国内JANコードに限定。
+check(source.includes("!/^(45|49)/.test(digits)"),'国内JANコードの判定がありません');
+check(source.includes('海外製品のバーコードは対象外です'),'海外製品の除外案内がありません');
+check(source.includes('jp.openfoodfacts.org/api/v2/product'),'国内向け商品検索になっていません');
+results.push('7. 国内JAN限定・海外製品除外: PASS');
 
 console.log(results.join('\n'));
