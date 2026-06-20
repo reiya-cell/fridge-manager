@@ -18,6 +18,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Check JavaScript syntax
+        run: node --check app.js && node --check service-worker.js
+      - name: Run regression simulations
+        run: node tests/logic-simulations.mjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

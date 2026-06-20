@@ -71,4 +71,14 @@ check(source.indexOf('if(barcodeCache[digits]?.name)')<source.indexOf("fetch(`ht
 check(html.includes('レシート・ラベルから入力'),'商品ラベルOCRの導線がありません');
 results.push('8. 調味料OCR・国内JANキャッシュ・未登録商品学習: PASS');
 
+// 9: バーコード後の期限OCRと確認。
+check(html.includes('id="barcodeExpiryStep"'),'バーコードと同じ画面の期限読取がありません');
+check(html.includes('id="expiryKind"'),'賞味期限・消費期限の選択がありません');
+check(source.includes('function extractExpiryDates'),'期限日付の抽出処理がありません');
+check(source.includes("Tesseract.recognize(url,'jpn+eng'"),'期限OCRがありません');
+check(source.includes("if(pendingExpiryDate){$('#expiryDate').value=pendingExpiryDate"),'期限の登録画面への引継ぎがありません');
+check(source.includes("items[0].expiryKind=expiryKind"),'期限種別が保存されません');
+check(source.includes('function cancelBarcodeFlow'),'途中終了時の状態破棄がありません');
+results.push('9. バーコード後の期限OCR・候補確認・期限引継ぎ: PASS');
+
 console.log(results.join('\n'));
