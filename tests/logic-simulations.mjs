@@ -118,4 +118,11 @@ const serviceWorker=await readFile(new URL('../service-worker.js',import.meta.ur
 check(serviceWorker.includes("assets/irasutoya/frozen.png"),'画像のオフラインキャッシュがありません');
 results.push('13. いらすとや8点・カテゴリ適合・出典表示・画像キャッシュ: PASS');
 
+// 14: 履歴内容に関係なく画像URLを生成し、失敗時も代替表示。
+check(source.includes('function iconUrl(path)'),'画像パスの絶対URL化がありません');
+check(source.includes("name.includes('冷凍')?'frozen':'daily'"),'カテゴリ外食材の画像フォールバックがありません');
+check(source.includes('onerror="this.onerror=null;this.src='),'画像読込失敗時の代替画像がありません');
+check(!source.includes('loading="lazy"'),'動的画像に遅延読込が残っています');
+results.push('14. 画像URL絶対化・全食材割当・読込失敗フォールバック: PASS');
+
 console.log(results.join('\n'));
