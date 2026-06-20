@@ -8,7 +8,7 @@
   <title>わが家の冷蔵庫</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=20">
+  <link rel="stylesheet" href="styles.css?v=21">
 </head>
 <body>
   <aside class="sidebar">
@@ -82,6 +82,10 @@
     </section>
     <section id="alertsView" class="view"><div id="alertList" class="inventory-grid"></div></section>
   </main>
+  <dialog id="editItemDialog" class="setup-dialog edit-item-dialog">
+    <div class="camera-header"><div><p class="eyebrow">EDIT ITEM</p><h2>登録内容を編集</h2></div><button type="button" id="closeEditItem" class="camera-close" aria-label="閉じる">×</button></div>
+    <form id="editItemForm"><label for="editItemName">食材名</label><input id="editItemName" maxlength="50" required><div class="fields"><div><label for="editQuantity">数量</label><input id="editQuantity" type="number" min="0.1" step="0.1" required></div><div><label for="editUnit">単位</label><select id="editUnit"><option>個</option><option>本</option><option>パック</option><option>袋</option><option>L</option></select></div><div><label for="editStorage">保存状態</label><select id="editStorage"><option>冷蔵</option><option>冷凍</option></select></div><div><label for="editLocation">保管位置</label><select id="editLocation"></select></div><div class="edit-expiry"><label for="editExpiry">期限</label><input id="editExpiry" type="date" required></div></div><div class="edit-actions"><button type="button" id="cancelEditItem" class="secondary">キャンセル</button><button type="submit" class="primary">変更を保存</button></div></form>
+  </dialog>
   <dialog id="cameraDialog" class="camera-dialog">
     <div class="camera-header"><div><span class="eyebrow">TEXT OCR</span><h2>レシート・商品ラベルを撮影</h2></div><button type="button" id="closeCamera" class="camera-close" aria-label="カメラを閉じる">×</button></div>
     <p id="cameraStatus" class="camera-status">カメラを準備しています。</p>
@@ -112,6 +116,6 @@
     <p class="camera-note">45または49から始まる日本向けJANコードのみ対応します。海外製品は対象外です。</p>
   </dialog>
   <div id="toast" role="status"></div>
-  <script src="app.js?v=20"></script>
+  <script src="app.js?v=21"></script>
 </body>
 </html>
