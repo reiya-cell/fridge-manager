@@ -27,7 +27,7 @@ results.push('2. 冷凍室フィルター・区画容量: PASS');
 check(source.includes('navigator.mediaDevices.getUserMedia'),'カメラAPIがありません');
 check(source.includes('globalThis.isSecureContext'),'HTTPS判定がありません');
 check(source.includes("navigator.serviceWorker.register"),'Service Worker登録がありません');
-check(source.includes('NotAllowedError'),'カメラ拒否時の処理がありません');
+check(source.includes('自動読取を開始できません'),'バーコードカメラ失敗時の案内がありません');
 results.push('3. カメラ・HTTPS/PWA・許可拒否分岐: PASS');
 
 // 4: マップ追加導線と期限表示OCR。
