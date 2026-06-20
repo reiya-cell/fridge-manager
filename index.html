@@ -30,6 +30,7 @@
         <div class="form-step active" data-step="1">
           <label for="itemName">食材名</label>
           <div class="input-row add-methods"><input id="itemName" list="foodSuggestions" required autocomplete="off" placeholder="例：キャベツ、豚こま肉、しょうゆ"><button type="button" id="receiptButton" class="secondary">レシート・ラベルから入力</button><button type="button" id="barcodeButton" class="secondary">バーコードで追加</button></div>
+          <button type="button" id="manualExpiryButton" class="expiry-shortcut">バーコードなしで期限を読み取る</button>
           <datalist id="foodSuggestions"></datalist>
           <input id="imageInput" class="visually-hidden" type="file" accept="image/*" capture="environment">
           <div id="imageAssistant" class="image-assistant receipt-assistant" hidden><img id="imagePreview" alt="選択したレシートまたは商品ラベル"><div><b>文字から入力</b><p id="imageStatus">文字を確認しています…</p><div id="imageCandidates" class="receipt-candidate-list"></div><div id="receiptActions" class="receipt-actions" hidden><button type="button" id="chooseAnotherImage" class="secondary">撮り直す</button><button type="button" id="addReceiptItems" class="primary">選択した食材の設定へ</button></div></div></div>
@@ -90,7 +91,7 @@
     <div class="actions"><button type="button" id="previousReceiptItem" class="secondary">前へ</button><button type="button" id="nextReceiptItem" class="primary">次へ</button></div>
   </dialog>
   <dialog id="barcodeDialog" class="camera-dialog barcode-dialog">
-    <div class="camera-header"><div><span class="eyebrow">JAN / EAN</span><h2>バーコードで追加</h2></div><button type="button" id="closeBarcode" class="camera-close" aria-label="バーコード画面を閉じる">×</button></div>
+    <div class="camera-header"><div><span id="barcodeDialogEyebrow" class="eyebrow">JAN / EAN</span><h2 id="barcodeDialogTitle">バーコードで追加</h2></div><button type="button" id="closeBarcode" class="camera-close" aria-label="登録画面を閉じる">×</button></div>
     <p id="barcodeStatus" class="camera-status">カメラを準備しています。</p>
     <div id="barcodeScanStep"><div class="camera-stage barcode-stage"><video id="barcodeVideo" autoplay playsinline muted></video><div class="scan-line"></div></div>
     <div class="barcode-manual"><label for="barcodeValue">JANコードを手入力</label><div class="input-row"><input id="barcodeValue" inputmode="numeric" autocomplete="off" placeholder="数字を入力"><button type="button" id="lookupBarcode" class="secondary">商品を検索</button></div></div>

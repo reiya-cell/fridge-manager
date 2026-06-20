@@ -90,4 +90,12 @@ check(source.includes("drawImage(video,0,0)"),'映像からOCR画像を生成し
 check(source.includes('stopExpiryCamera();$(\'#expiryCameraButton\')'),'読取後にカメラを停止していません');
 results.push('10. 期限ライブ読取・メモリ処理・読取後停止: PASS');
 
+// 11: バーコードなしの手入力から期限ライブ読取。
+check(html.includes('id="manualExpiryButton"'),'手入力用の期限読取ボタンがありません');
+check(source.includes("$('#manualExpiryButton').onclick"),'手入力期限読取の起動処理がありません');
+check(source.includes("showBarcodeExpiryStep('',name)"),'バーコードなしで期限画面へ進めません');
+check(source.includes("['肉類','魚介類'].includes(category)?'消費期限':'賞味期限'"),'肉・魚の消費期限初期値がありません');
+check(source.includes('if(pendingBarcode)saveBarcodeProduct'),'バーコードなしの空キャッシュ保存を防いでいません');
+results.push('11. 手入力→期限ライブ読取・肉魚の消費期限初期値: PASS');
+
 console.log(results.join('\n'));
