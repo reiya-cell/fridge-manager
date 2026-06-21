@@ -8,9 +8,10 @@
   <title>わが家の冷蔵庫</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=29">
+  <link rel="stylesheet" href="styles.css?v=30">
 </head>
 <body>
+  <section id="authGate" class="auth-gate" hidden><form id="magicLinkForm" class="auth-card"><span class="brand-mark">冷</span><p class="eyebrow">PRIVATE FRIDGE</p><h1>メールでログイン</h1><p>あなた専用の冷蔵庫データを開きます。届いたメールのリンクを押してください。</p><label for="authEmail">メールアドレス</label><input id="authEmail" type="email" autocomplete="email" required placeholder="name@example.com"><button type="submit" class="primary">ログインリンクを送る</button><p id="authStatus" class="hint" role="status"></p></form></section>
   <aside class="sidebar">
     <div class="brand"><span class="brand-mark">冷</span><div><strong>わが家の冷蔵庫</strong><small>MR-JW52TJ / 517L</small></div></div>
     <nav>
@@ -22,7 +23,7 @@
   </aside>
 
   <main>
-    <header><div><p class="eyebrow">FRIDGE ASSISTANT</p><h1 id="pageTitle">何を追加しますか？</h1></div><div class="today" id="today"></div></header>
+    <header><div><p class="eyebrow">FRIDGE ASSISTANT</p><h1 id="pageTitle">何を追加しますか？</h1></div><div class="header-account"><div class="today" id="today"></div><span id="cloudModeBadge" class="cloud-mode-badge">端末保存</span><button type="button" id="signOutButton" class="text-button" hidden>ログアウト</button></div></header>
 
     <section id="addView" class="view active">
       <section class="quick-picker" aria-labelledby="quickPickerTitle">
@@ -101,6 +102,7 @@
   </dialog>
   <div id="toast" role="status"></div>
   <script>try{const raw=localStorage.getItem('fridge-items')||localStorage.getItem('fridgeItems')||localStorage.getItem('fridgeInventory'),parsed=raw?JSON.parse(raw):[],saved=Array.isArray(parsed)?parsed:Array.isArray(parsed?.items)?parsed.items:[];document.getElementById('itemCount').textContent=saved.length}catch{}</script>
-  <script src="app.js?v=29"></script>
+  <script src="cloud-config.js?v=30"></script>
+  <script src="app.js?v=30"></script>
 </body>
 </html>
