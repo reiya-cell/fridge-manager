@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#183c32">
+  <meta name="theme-color" content="#245f8f">
   <meta name="description" content="MR-JW52TJ向けの家庭用食材・期限管理ツール">
   <title>わが家の冷蔵庫</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=30">
+  <link rel="stylesheet" href="styles.css?v=31">
 </head>
 <body>
   <section id="authGate" class="auth-gate" hidden><form id="magicLinkForm" class="auth-card"><span class="brand-mark">冷</span><p class="eyebrow">PRIVATE FRIDGE</p><h1>メールでログイン</h1><p>あなた専用の冷蔵庫データを開きます。届いたメールのリンクを押してください。</p><label for="authEmail">メールアドレス</label><input id="authEmail" type="email" autocomplete="email" required placeholder="name@example.com"><button type="submit" class="primary">ログインリンクを送る</button><p id="authStatus" class="hint" role="status"></p></form></section>
@@ -18,6 +18,8 @@
       <button class="nav active" data-view="add">＋ 食材を追加</button>
       <button class="nav" data-view="inventory">▦ 冷蔵庫の中身 <span id="itemCount" class="badge">0</span></button>
       <button class="nav" data-view="alerts">◷ 期限リマインド <span id="alertCount" class="badge warning">0</span></button>
+      <button class="nav" data-view="foodSettings">≡ 食材と期限の設定</button>
+      <button class="nav" data-view="fridgeSettings">▣ 冷蔵庫の設定</button>
     </nav>
     <div class="capacity"><div class="capacity-title"><span>使用容量（目安）</span><b id="capacityText">0 / 517 L</b></div><div class="meter"><span id="capacityBar"></span></div><small>登録量からの概算です</small></div>
   </aside>
@@ -79,6 +81,8 @@
       </div>
     </section>
     <section id="alertsView" class="view"><div id="alertList" class="inventory-grid"></div></section>
+    <section id="foodSettingsView" class="view settings-view"><div class="settings-hero"><div><p class="eyebrow">FOOD SETTINGS</p><h2>食材一覧と期限</h2><p>表示期限がない生鮮食品には、購入日からの保存目安を自動設定します。</p></div><input id="foodSettingsSearch" type="search" placeholder="食材を検索"></div><div id="foodSettingsList" class="settings-list"></div><form id="addFoodSettingForm" class="settings-card add-setting"><h3>食材を追加</h3><div class="setting-fields"><input id="newFoodName" required maxlength="30" placeholder="食材名"><select id="newFoodCategory"><option>肉類</option><option>魚介類</option><option>野菜</option><option>果物</option><option>乳製品・日配</option><option>調味料</option><option>その他</option></select><label>冷蔵<input id="newFoodCold" type="number" min="1" max="365" value="7" required>日</label><label>冷凍<input id="newFoodFrozen" type="number" min="1" max="730" value="30" required>日</label><button class="primary" type="submit">追加</button></div></form><p class="settings-note">保存日数は品質の目安です。商品の表示、保存温度、におい・見た目を優先してください。</p></section>
+    <section id="fridgeSettingsView" class="view settings-view"><div class="settings-hero"><div><p class="eyebrow">FRIDGE SETTINGS</p><h2>冷蔵庫の設定</h2><p>ご家庭の冷蔵庫に近い扉タイプと容量を選べます。</p></div></div><form id="fridgeSettingsForm" class="settings-card"><div class="setting-fields"><label>表示名<input id="fridgeName" maxlength="40" required></label><label>扉タイプ<select id="fridgeDoorType"><option value="french">両開き</option><option value="single">片開き</option></select></label><label>総容量<select id="fridgeCapacity"><option value="250">小型 250L</option><option value="350">中型 350L</option><option value="450">大型 450L</option><option value="517">大型 517L</option><option value="600">大容量 600L</option></select></label></div><div class="setting-actions"><button type="button" id="resetFridgeSettings" class="secondary">標準に戻す</button><button type="submit" class="primary">設定を保存</button></div></form><div class="settings-card preview-card"><h3>プレビュー</h3><div id="fridgeSettingsPreview" class="mini-fridge-preview"></div></div></section>
   </main>
   <dialog id="editItemDialog" class="setup-dialog edit-item-dialog">
     <div class="camera-header"><div><p class="eyebrow">EDIT ITEM</p><h2>登録内容を編集</h2></div><button type="button" id="closeEditItem" class="camera-close" aria-label="閉じる">×</button></div>
@@ -102,7 +106,7 @@
   </dialog>
   <div id="toast" role="status"></div>
   <script>try{const raw=localStorage.getItem('fridge-items')||localStorage.getItem('fridgeItems')||localStorage.getItem('fridgeInventory'),parsed=raw?JSON.parse(raw):[],saved=Array.isArray(parsed)?parsed:Array.isArray(parsed?.items)?parsed.items:[];document.getElementById('itemCount').textContent=saved.length}catch{}</script>
-  <script src="cloud-config.js?v=30"></script>
-  <script src="app.js?v=30"></script>
+  <script src="cloud-config.js?v=31"></script>
+  <script src="app.js?v=31"></script>
 </body>
 </html>

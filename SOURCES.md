@@ -21,3 +21,9 @@
 - web.dev「Progressive Web Apps」: 将来のインストール・通知対応を検討する資料。https://web.dev/learn/pwa/
 
 注: 類似サービスの提供状況・機能は変更されることがあります。正式な比較時は各公式ページを再確認してください。
+# 保存日数設定の参考資料
+
+- USDA Food Safety and Inspection Service, Refrigeration & Food Safety: https://www.fsis.usda.gov/food-safety/safe-food-handling-and-preparation/food-safety-basics/refrigeration
+- FoodSafety.gov, FoodKeeper App: https://www.foodsafety.gov/keep-food-safe/foodkeeper-app
+
+アプリ内の日数は一般的な保存目安であり、安全を保証する期限ではありません。商品に賞味期限・消費期限の表示がある場合は、その表示を優先します。冷蔵庫の温度、開封状態、包装、鮮度によって保存可能期間は変わります。
