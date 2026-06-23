@@ -8,7 +8,7 @@
   <title>わが家の冷蔵庫</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=47">
+  <link rel="stylesheet" href="styles.css?v=49">
   <style>.whole-fridge-choice{width:min(100%,390px);margin:auto;padding:8px;display:grid;grid-template-columns:1fr 1fr;grid-template-areas:"upper door" "middle door" "lower door" "ice switch" "freezer freezer" "vegetable vegetable";gap:4px;background:linear-gradient(145deg,#eef3f6,#bdc9d0);border:1px solid #aab8c0;border-radius:18px 18px 12px 12px}.whole-room{margin:0}.whole-room span{height:100%;min-height:62px;padding:8px!important;border-radius:3px!important;background:linear-gradient(145deg,#fff,#e3ebef)!important}.whole-room input:checked+span{background:#d7ecfa!important;border:2px solid #2d79ad!important;outline:none!important}.whole-room.unavailable span{opacity:.42;filter:grayscale(1);cursor:not-allowed}.room-refrigerator-upper{grid-area:upper}.room-refrigerator-middle{grid-area:middle}.room-refrigerator-lower{grid-area:lower}.room-door{grid-area:door}.room-ice{grid-area:ice}.room-switch{grid-area:switch}.room-freezer{grid-area:freezer}.room-vegetable{grid-area:vegetable}@media(max-width:430px){.whole-fridge-choice{width:100%;padding:6px}.whole-room span{min-height:55px;padding:6px 3px!important}.whole-room b{font-size:12px}.whole-room small{font-size:9px}}</style>
   <style>.editable-location-options,.custom-layout-map,.custom-fridge-preview{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.custom-room{min-height:105px;border-radius:10px!important}.room-settings-list{display:grid;gap:10px;margin-bottom:16px}.room-setting-row{display:grid;grid-template-columns:1fr 120px 120px auto;gap:10px;align-items:center;padding:10px;background:#f5f9fc;border-radius:12px}.room-setting-row label{display:flex;align-items:center;margin:0;gap:5px}.custom-fridge-preview{max-width:520px;margin:auto}.preview-room{display:flex;flex-direction:column;justify-content:center;min-height:85px;padding:12px;border:1px solid #a9c7db;border-radius:10px;background:#eaf5fc}.preview-room.frozen{background:#e9f0ff;border-color:#9eb5df}.preview-room small{margin-top:5px;color:var(--muted)}@media(max-width:600px){.room-setting-row{grid-template-columns:1fr 100px}.editable-location-options,.custom-layout-map,.custom-fridge-preview{grid-template-columns:1fr 1fr}}</style>
   <style>.fridge-map-unified{width:min(100%,300px)!important;max-width:300px!important;grid-template-rows:repeat(3,38px) 42px 52px 52px;padding:6px!important;gap:3px!important}.fridge-map-unified .whole-room{width:100%;min-height:0!important;height:auto!important;border:0;padding:3px 4px!important}.fridge-map-unified .whole-room span{height:auto!important;min-height:0!important}.fridge-map-unified .whole-room b{font-size:11px;line-height:1.15}.fridge-map-unified .whole-room small{font-size:8px;line-height:1.1;margin-top:2px}.fridge-map-unified .whole-room.selected{outline:3px solid #2d79ad!important;outline-offset:-3px}.fridge-map-unified .map-items{display:none!important}.fridge-map-unified .mini-meter{display:block!important;width:88%;height:3px!important;min-height:3px!important;margin:3px auto 0!important}.fridge-map-unified .mini-meter i{min-height:0!important;height:3px!important}@media(max-width:430px){.fridge-map-unified{width:min(100%,280px)!important;max-width:280px!important;grid-template-rows:repeat(3,35px) 38px 46px 46px}.fridge-panel{padding:14px!important}.fridge-heading h2{font-size:19px}}</style>
@@ -43,7 +43,7 @@
         <div class="quick-section"><h3>カテゴリ</h3><div id="categoryGrid" class="category-icon-grid"><button type="button" class="category-icon-button" data-quick-category="meat"><span class="category-pictogram" aria-hidden="true">肉類</span><b>肉</b></button><button type="button" class="category-icon-button" data-quick-category="fish"><span class="category-pictogram" aria-hidden="true">魚介</span><b>魚</b></button><button type="button" class="category-icon-button" data-quick-category="vegetable"><span class="category-pictogram" aria-hidden="true">野菜</span><b>野菜</b></button><button type="button" class="category-icon-button" data-quick-category="fruit"><span class="category-pictogram" aria-hidden="true">果物</span><b>果物</b></button><button type="button" class="category-icon-button" data-quick-category="dairy"><span class="category-pictogram" aria-hidden="true">乳製品</span><b>乳製品</b></button><button type="button" class="category-icon-button" data-quick-category="daily"><span class="category-pictogram" aria-hidden="true">卵日配</span><b>卵・日配</b></button><button type="button" class="category-icon-button" data-quick-category="seasoning"><span class="category-pictogram" aria-hidden="true">調味料</span><b>調味料</b></button><button type="button" class="category-icon-button" data-quick-category="frozen"><span class="category-pictogram" aria-hidden="true">冷凍品</span><b>冷凍食品</b></button></div></div>
         <div id="categoryFoodsPanel" class="category-foods-panel" hidden><div class="category-panel-heading"><h3 id="selectedCategoryName"></h3><div class="category-panel-actions"><button type="button" id="manageCustomFoods" class="text-button delete-command">削除</button><button type="button" id="closeCategoryFoods" class="text-button">閉じる</button></div></div><div id="categoryFoods" class="food-icon-grid"></div><form id="customFoodForm" class="custom-food-form"><label for="customFoodName">このカテゴリへ食材を追加</label><div><input id="customFoodName" maxlength="30" autocomplete="off" placeholder="食材名を入力" required><button type="submit" class="secondary">＋追加</button></div></form></div>
       </section>
-      <div class="steps"><span class="step current">1 食材</span><i></i><span class="step">2 保存状態</span><i></i><span class="step">3 場所</span></div>
+      <div class="steps"><span class="step current">1 食材</span><i></i><span class="step">2 保存状態</span><i></i><span class="step">3 期限</span></div>
       <form id="itemForm" class="card form-card">
         <div class="form-step active" data-step="1">
           <label for="itemName">食材名</label>
@@ -55,19 +55,19 @@
           <button type="button" class="primary next">次へ</button>
         </div>
         <div class="form-step" data-step="2">
-          <p class="label">保存状態を選んでください</p>
+          <p class="label">肉・魚だけ保存状態を選んでください</p>
           <div class="choice-grid"><label class="choice"><input type="radio" name="storage" value="冷蔵" checked><span>🟦<b>冷蔵</b><small>冷蔵室・野菜室など</small></span></label><label class="choice"><input type="radio" name="storage" value="冷凍"><span>❄️<b>冷凍</b><small>冷凍室・切替室など</small></span></label></div>
           <div class="actions"><button type="button" class="secondary back">戻る</button><button type="button" class="primary next">次へ</button></div>
         </div>
         <div class="form-step" data-step="3">
-          <p class="label">冷蔵庫のどこに追加しますか？</p>
+          <p class="label">期限を確認してください</p>
           <div id="locationChoices" class="location-grid"></div>
           <div class="fields"><div><label for="purchaseDate">購入日</label><input id="purchaseDate" type="date" required></div><div><label for="openState">開封状態</label><select id="openState"><option>未開封</option><option>開封済み</option></select></div><div><label for="itemExpiryKind">期限の種類</label><select id="itemExpiryKind"><option>保存目安</option><option>賞味期限</option><option>消費期限</option></select></div><div><label for="expiryDate">期限</label><input id="expiryDate" type="date" required><button type="button" id="manualExpiryButton" class="expiry-shortcut">期限をカメラで読み取る</button></div></div>
           <p id="expiryHint" class="hint"></p>
-          <div class="actions"><button type="button" class="secondary back">戻る</button><button type="submit" class="primary">冷蔵庫に追加する</button></div>
+          <div class="actions"><button type="button" class="secondary back">戻る</button><button type="submit" class="primary">この内容で追加する</button></div>
         </div>
       </form>
-      <div class="tip"><b>はじめての方へ</b><p>食材名 → 保存状態 → 入れた場所の順に選ぶだけです。登録内容はこのブラウザ内に保存されます。</p></div>
+      <div class="tip"><b>はじめての方へ</b><p>食材名を選ぶと、野菜は野菜室へ、それ以外は空きが多い冷蔵区画へ自動で入ります。肉・魚だけ冷蔵/冷凍を選びます。</p></div>
     </section>
 
     <section id="todayView" class="view"><div class="today-hero"><div><p class="eyebrow">USE FIRST</p><h2>今日使う食材</h2><p>期限が近い順です。使った量を選ぶだけで在庫へ反映します。</p></div></div><div id="todayList" class="today-list"></div></section>
@@ -126,9 +126,9 @@
   <div id="undoBar" class="undo-bar" hidden><span id="undoMessage"></span><button type="button" id="undoAction">元に戻す</button></div>
   <script>try{const raw=localStorage.getItem('fridge-items')||localStorage.getItem('fridgeItems')||localStorage.getItem('fridgeInventory'),parsed=raw?JSON.parse(raw):[],saved=Array.isArray(parsed)?parsed:Array.isArray(parsed?.items)?parsed.items:[];document.getElementById('itemCount').textContent=saved.length}catch{}</script>
   <script>if(!document.querySelector('[data-quick-category="other"]'))document.getElementById('categoryGrid').insertAdjacentHTML('beforeend','<button type="button" class="category-icon-button" data-quick-category="other"><span class="category-pictogram category-other" aria-hidden="true">その他</span><b>その他</b></button>')</script>
-  <script src="cloud-config.js?v=47"></script>
-  <script src="js/app-utils.js?v=47"></script>
-  <script src="js/camera-service.js?v=47"></script>
-  <script src="app.js?v=47"></script>
+  <script src="cloud-config.js?v=49"></script>
+  <script src="js/app-utils.js?v=49"></script>
+  <script src="js/camera-service.js?v=49"></script>
+  <script src="app.js?v=49"></script>
 </body>
 </html>
