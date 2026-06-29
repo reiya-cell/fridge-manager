@@ -177,6 +177,15 @@
       margin-bottom: 14px;
     }
 
+    .home-screen {
+      margin-bottom: 14px;
+    }
+
+    .home-screen .app-progress-panel {
+      min-height: 0;
+      margin-bottom: 0;
+    }
+
     .summary,
     .settings,
     .subject-workspace,
@@ -667,7 +676,7 @@
 
     .app-progress-head h3 {
       margin: 0;
-      font-size: 20px;
+      font-size: 22px;
     }
 
     .app-progress-head p {
@@ -701,12 +710,12 @@
     .progress-chip strong {
       display: block;
       margin-top: 4px;
-      font-size: 18px;
+      font-size: 24px;
       line-height: 1.1;
     }
 
     .daily-bars {
-      min-height: 180px;
+      min-height: 170px;
       display: grid;
       grid-template-columns: repeat(7, minmax(0, 1fr));
       gap: 9px;
@@ -724,7 +733,7 @@
     .bar-track {
       position: relative;
       width: min(34px, 100%);
-      height: 132px;
+      height: 126px;
       border-radius: 999px;
       background: rgba(0,0,0,.28);
       overflow: hidden;
@@ -760,7 +769,7 @@
 
     .mode-main {
       width: 100%;
-      min-height: 66px;
+      min-height: 58px;
       background: #fff;
       color: var(--primary);
       font-size: 18px;
@@ -781,11 +790,17 @@
     }
 
     .mode-button {
-      min-height: 58px;
+      min-height: 52px;
       background: rgba(255,255,255,.12);
       border: 1px solid rgba(255,255,255,.14);
       color: #fff;
       padding: 9px 8px;
+    }
+
+    .home-log {
+      margin: 0 0 9px;
+      background: rgba(255,255,255,.96);
+      box-shadow: 0 10px 18px rgba(0,0,0,.12);
     }
 
     .auto-item strong {
@@ -1101,7 +1116,7 @@
       }
 
       .progress-chip-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
       .mode-grid {
@@ -1120,15 +1135,43 @@
     <header class="topbar">
       <div>
         <p class="eyebrow">DENKEN 3 LAW TIME BOMB</p>
-        <h1>電験三種 法規 時限爆弾式 学習管理</h1>
-        <p class="lead">2026年8月30日を最終爆発日に固定し、毎週の小さな時限爆弾を解除しながら、法規の到達度と過去問復習を進めます。</p>
-      </div>
-      <div class="actions">
-        <button type="button" id="saveNow" class="primary">保存</button>
-        <button type="button" id="exportData">書き出し</button>
-        <button type="button" id="resetData" class="danger">初期化</button>
+        <h1>法規 爆弾解除</h1>
+        <p class="lead">今日の進捗だけ見て、すぐ勉強に入る画面です。</p>
       </div>
     </header>
+
+    <section class="home-screen" aria-label="今日の進捗ホーム">
+      <div class="app-progress-panel" aria-label="直近の学習状況">
+        <div class="app-progress-head">
+          <div>
+            <h3>今日の進捗</h3>
+            <p id="homeOneLine">読み込み中</p>
+          </div>
+          <span class="status-chip safe" id="compactBombStatus">待機中</span>
+        </div>
+        <div class="progress-chip-grid">
+          <div class="progress-chip"><span>合格</span><strong id="compactBomb">--</strong></div>
+          <div class="progress-chip"><span>試験</span><strong id="compactExamDays">--日</strong></div>
+          <div class="progress-chip"><span>滞留</span><strong id="compactWeeklyHold">--%</strong></div>
+        </div>
+        <div id="dailyBars" class="daily-bars" aria-label="7日間の学習進捗バー"></div>
+        <div class="study-log-card home-log" aria-label="今日の学習ログ">
+          <div class="log-grid">
+            <label>今日
+              <select id="logSubject"></select>
+            </label>
+            <button type="button" id="addStudyLog" class="primary flow-action">1時間記録</button>
+            <button type="button" id="advanceNextCheck" class="ghost flow-action">次を解除</button>
+          </div>
+        </div>
+        <button type="button" id="modeSmart" class="mode-main">おまかせ解除<span>今日の単元を自動で選ぶ</span></button>
+        <div class="mode-grid" aria-label="学習モード">
+          <button type="button" id="modeUnitList" class="mode-button">単元</button>
+          <button type="button" id="modePastExam" class="mode-button">過去問</button>
+          <button type="button" id="modeStats" class="mode-button">実績</button>
+        </div>
+      </div>
+    </section>
 
     <section class="dashboard">
       <div class="panel summary">
@@ -1190,37 +1233,6 @@
             <p>入力は単元ごとの3周チェックに集約しました。学習段階、記憶の手応え、詰まり候補はアプリが自動判定します。</p>
           </div>
           <button type="button" id="quickWin" class="ghost">優先単元を選ぶ</button>
-        </div>
-        <div class="study-log-card" aria-label="今日の学習ログ">
-          <div class="log-grid">
-            <label>1. 今日やる単元
-              <select id="logSubject"></select>
-            </label>
-            <button type="button" id="addStudyLog" class="primary flow-action">2. 1時間を記録</button>
-            <button type="button" id="advanceNextCheck" class="ghost flow-action">3. 次を1つ解除</button>
-          </div>
-          <p class="log-note">1時間勉強する日はこの3操作だけでOKです。前回と同じ単元なら「1時間を記録」「次を1つ解除」の2操作で済みます。</p>
-        </div>
-        <div class="app-progress-panel" aria-label="直近の学習状況">
-          <div class="app-progress-head">
-            <div>
-              <h3>直近の学習状況</h3>
-              <p>1日ごとの進捗と、今日使うモードをまとめます。</p>
-            </div>
-            <span class="status-chip safe" id="compactBombStatus">待機中</span>
-          </div>
-          <div class="progress-chip-grid">
-            <div class="progress-chip"><span>爆弾</span><strong id="compactBomb">--</strong></div>
-            <div class="progress-chip"><span>試験まで</span><strong id="compactExamDays">--日</strong></div>
-            <div class="progress-chip"><span>週間滞留</span><strong id="compactWeeklyHold">--%</strong></div>
-          </div>
-          <div id="dailyBars" class="daily-bars" aria-label="7日間の学習進捗バー"></div>
-          <button type="button" id="modeSmart" class="mode-main">おまかせ解除<span>優先単元を選んで今日の対象にする</span></button>
-          <div class="mode-grid" aria-label="学習モード">
-            <button type="button" id="modeUnitList" class="mode-button">単元一覧</button>
-            <button type="button" id="modePastExam" class="mode-button">過去問</button>
-            <button type="button" id="modeStats" class="mode-button">実績</button>
-          </div>
         </div>
         <div id="methodNote" class="method-card"></div>
         <div class="strategy-card" aria-label="note式短期集中攻略メモ">
@@ -1292,9 +1304,11 @@
           <p class="backup-help"><strong>使い方:</strong> 普段は自動保存です。別端末へ移す・バックアップを残すときは「書き出し」を押してJSONを保管します。復元するときはJSONを貼り付けて「JSONから復元」を押します。</p>
           <textarea id="dataBox" class="data-box" placeholder="書き出しボタンでJSONが表示されます。貼り付けて復元もできます。"></textarea>
           <div class="actions" style="justify-content:flex-start;margin-top:8px">
-            <button type="button" id="exportDataPanel">書き出し</button>
+            <button type="button" id="saveNow" class="primary">保存</button>
+            <button type="button" id="exportData">書き出し</button>
             <button type="button" id="importData">JSONから復元</button>
             <button type="button" id="clearDataBox" class="ghost">欄を空にする</button>
+            <button type="button" id="resetData" class="danger">初期化</button>
           </div>
         </section>
 
@@ -1405,6 +1419,7 @@
       compactBomb: $("#compactBomb"),
       compactExamDays: $("#compactExamDays"),
       compactWeeklyHold: $("#compactWeeklyHold"),
+      homeOneLine: $("#homeOneLine"),
       dailyBars: $("#dailyBars"),
       modeSmart: $("#modeSmart"),
       modeUnitList: $("#modeUnitList"),
@@ -1818,6 +1833,7 @@
       elements.compactBomb.textContent = percent(stats.probability);
       elements.compactExamDays.textContent = `${stats.days}日`;
       elements.compactWeeklyHold.textContent = percent(weeklyHold);
+      elements.homeOneLine.textContent = `今週 ${Math.round(stats.weeklyProgress)}% / 今日1時間でOK`;
       elements.dailyBars.innerHTML = dailyProgress().map((day) => `
         <div class="daily-bar">
           <div class="bar-track" title="${day.minutes}分"><i style="--value:${percent(day.progress)}"></i></div>
@@ -2229,7 +2245,7 @@
     });
 
     $("#exportData").addEventListener("click", exportCurrentData);
-    $("#exportDataPanel").addEventListener("click", exportCurrentData);
+    $("#exportDataPanel")?.addEventListener("click", exportCurrentData);
 
     $("#importData").addEventListener("click", () => {
       try {
