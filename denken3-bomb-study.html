@@ -130,7 +130,7 @@
     .app {
       width: min(1180px, calc(100% - 28px));
       margin: 0 auto;
-      padding: 20px 0 40px;
+      padding: 20px 0 106px;
     }
 
     .topbar {
@@ -405,6 +405,38 @@
       grid-template-columns: minmax(0, 1fr) 360px;
       gap: 14px;
       align-items: start;
+    }
+
+    body[data-view="home"] .dashboard,
+    body[data-view="home"] .main-grid,
+    body[data-view="units"] .home-screen,
+    body[data-view="units"] .dashboard,
+    body[data-view="units"] .aside,
+    body[data-view="units"] .past-exam-section,
+    body[data-view="past"] .home-screen,
+    body[data-view="past"] .dashboard,
+    body[data-view="past"] .aside,
+    body[data-view="past"] .subject-workspace > .section-head,
+    body[data-view="past"] .method-card,
+    body[data-view="past"] .strategy-card,
+    body[data-view="past"] #subjectGrid,
+    body[data-view="detail"] .home-screen,
+    body[data-view="detail"] .subject-workspace {
+      display: none;
+    }
+
+    body[data-view="units"] .main-grid,
+    body[data-view="past"] .main-grid,
+    body[data-view="detail"] .main-grid {
+      display: block;
+    }
+
+    body[data-view="detail"] .aside {
+      display: grid;
+    }
+
+    body[data-view="past"] .past-exam-section {
+      margin-top: 0;
     }
 
     .section-head {
@@ -1036,6 +1068,41 @@
       transform: translateX(-50%) translateY(0);
     }
 
+    .bottom-tabs {
+      position: fixed;
+      left: 50%;
+      bottom: 10px;
+      z-index: 30;
+      width: min(520px, calc(100% - 18px));
+      transform: translateX(-50%);
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+      border: 1px solid rgba(15, 118, 110, .2);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .94);
+      box-shadow: 0 16px 34px rgba(12, 35, 32, .18);
+      padding: 7px;
+      backdrop-filter: blur(10px);
+    }
+
+    .bottom-tab {
+      min-height: 46px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .bottom-tab.active {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 8px 16px rgba(15, 118, 110, .2);
+    }
+
     @media (max-width: 1040px) {
       .dashboard,
       .main-grid {
@@ -1332,9 +1399,16 @@
   </main>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <nav class="bottom-tabs" aria-label="表示切り替え">
+    <button type="button" class="bottom-tab active" data-view-target="home" aria-selected="true">ホーム</button>
+    <button type="button" class="bottom-tab" data-view-target="units" aria-selected="false">単元</button>
+    <button type="button" class="bottom-tab" data-view-target="past" aria-selected="false">過去問</button>
+    <button type="button" class="bottom-tab" data-view-target="detail" aria-selected="false">詳細</button>
+  </nav>
 
   <script>
     const STORAGE_KEY = "denken3-law-bomb-study-v3";
+    const VIEW_STORAGE_KEY = "denken3-law-bomb-study-view";
     const OFFICIAL_PRESETS = ["2026-08-30"];
     const TARGET_READINESS = 76;
     const LOG_RESULTS = {
@@ -1387,7 +1461,15 @@
       ]
     };
 
+    const VIEW_LABELS = {
+      home: "ホーム",
+      units: "単元",
+      past: "過去問",
+      detail: "詳細"
+    };
+
     let state = loadState();
+    let currentView = VIEW_LABELS[localStorage.getItem(VIEW_STORAGE_KEY)] ? localStorage.getItem(VIEW_STORAGE_KEY) : "home";
     let saveTimer = null;
 
     const $ = (selector) => document.querySelector(selector);
@@ -2061,6 +2143,18 @@
       target?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
+    function setView(view, shouldScroll = true) {
+      currentView = VIEW_LABELS[view] ? view : "home";
+      document.body.dataset.view = currentView;
+      localStorage.setItem(VIEW_STORAGE_KEY, currentView);
+      document.querySelectorAll(".bottom-tab").forEach((button) => {
+        const active = button.dataset.viewTarget === currentView;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-selected", active ? "true" : "false");
+      });
+      if (shouldScroll) window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
     function scheduleSave() {
       clearTimeout(saveTimer);
       saveTimer = setTimeout(saveState, 160);
@@ -2220,23 +2314,30 @@
 
     elements.modeSmart.addEventListener("click", () => {
       choosePrioritySubject();
-      scrollToSection(elements.logSubject.closest(".study-log-card"));
+      setView("home");
     });
 
     elements.modeUnitList.addEventListener("click", () => {
-      scrollToSection(elements.subjectGrid);
+      setView("units");
     });
 
     elements.modePastExam.addEventListener("click", () => {
-      scrollToSection(elements.pastExamList);
+      setView("past");
     });
 
     elements.modeStats.addEventListener("click", () => {
-      scrollToSection(document.querySelector(".app-progress-panel"));
+      setView("detail");
+    });
+
+    document.querySelectorAll(".bottom-tab").forEach((button) => {
+      button.addEventListener("click", () => {
+        setView(button.dataset.viewTarget);
+      });
     });
 
     $("#quickWin").addEventListener("click", () => {
       choosePrioritySubject();
+      setView("home");
     });
 
     $("#saveNow").addEventListener("click", () => {
@@ -2274,6 +2375,7 @@
 
     updatePastQuestionProgress();
     state.subjects.forEach(syncSubjectCompletion);
+    setView(currentView, false);
     render();
   </script>
 </body>
