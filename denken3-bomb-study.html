@@ -1,0 +1,2264 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#12322e">
+  <meta name="description" content="電験三種の法規合格に向けた学習状況を時限爆弾メタファーで管理する単体HTMLアプリ">
+  <title>電験三種 法規 時限爆弾式 学習管理</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f8f7;
+      --surface: #ffffff;
+      --surface-2: #eef7f4;
+      --line: #cfddd8;
+      --text: #17211f;
+      --muted: #5f6f6a;
+      --primary: #0f766e;
+      --primary-2: #14b8a6;
+      --accent: #84cc16;
+      --warn: #b45309;
+      --danger: #b91c1c;
+      --ink: #12322e;
+      --shadow: 0 16px 38px rgba(26, 54, 48, .1);
+      font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", Meiryo, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(20, 184, 166, .12), transparent 31rem),
+        radial-gradient(circle at 90% 10%, rgba(132, 204, 22, .12), transparent 26rem),
+        linear-gradient(180deg, #f8fbfa 0%, var(--bg) 100%);
+      color: var(--text);
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text);
+      padding: 10px 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    button.primary {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+
+    button.ghost {
+      background: transparent;
+      color: var(--primary);
+    }
+
+    button.danger {
+      border-color: #fecaca;
+      color: var(--danger);
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      padding: 9px 10px;
+    }
+
+    input[type="range"] {
+      padding: 0;
+      accent-color: var(--primary);
+    }
+
+    input[type="checkbox"] {
+      width: 18px;
+      min-height: 18px;
+      accent-color: var(--primary);
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+      outline: 3px solid rgba(20, 184, 166, .28);
+      outline-offset: 2px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 6px;
+      font-size: clamp(26px, 4vw, 40px);
+      line-height: 1.12;
+    }
+
+    h2 {
+      margin-bottom: 12px;
+      font-size: 22px;
+    }
+
+    h3 {
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+
+    .app {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 20px 0 40px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 16px;
+    }
+
+    .eyebrow {
+      margin: 0 0 5px;
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .lead {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .93);
+      box-shadow: var(--shadow);
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: minmax(0, 1.16fr) minmax(290px, .84fr);
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .summary,
+    .settings,
+    .subject-workspace,
+    .mission,
+    .risk-panel,
+    .timeline,
+    .data-tools,
+    .sources {
+      padding: 16px;
+    }
+
+    .bomb-board {
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr);
+      gap: 20px;
+      align-items: center;
+    }
+
+    .bomb-stage {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 250px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background:
+        linear-gradient(145deg, rgba(238, 247, 244, .9), #fff),
+        var(--surface-2);
+      overflow: hidden;
+    }
+
+    .bomb-stage::before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border: 1px dashed rgba(15, 118, 110, .22);
+      border-radius: 8px;
+      pointer-events: none;
+    }
+
+    .fuse {
+      position: absolute;
+      left: 50%;
+      top: 32px;
+      width: min(74%, 190px);
+      height: 10px;
+      transform: translateX(-8%);
+      border-radius: 999px;
+      background: #d7b78f;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(80, 49, 25, .16);
+    }
+
+    .fuse i {
+      display: block;
+      height: 100%;
+      width: var(--fuse, 60%);
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--primary-2));
+      transition: width .2s ease;
+    }
+
+    .spark {
+      position: absolute;
+      top: 23px;
+      left: calc(50% + min(74%, 190px) * .82);
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #fff7ed;
+      color: #d97706;
+      font-weight: 900;
+      box-shadow: 0 0 0 6px rgba(217, 119, 6, .12);
+    }
+
+    .bomb {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 150px;
+      aspect-ratio: 1;
+      margin-top: 34px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 28%, rgba(255,255,255,.24), transparent 16px),
+        linear-gradient(145deg, #1d3834, #071a18);
+      color: #fff;
+      box-shadow: 0 18px 42px rgba(18, 50, 46, .25);
+    }
+
+    .bomb::before {
+      content: "";
+      position: absolute;
+      top: -11px;
+      width: 54px;
+      height: 26px;
+      border-radius: 18px 18px 8px 8px;
+      background: #233f3b;
+      border: 5px solid #17312d;
+    }
+
+    .bomb strong {
+      position: relative;
+      z-index: 1;
+      font-size: 36px;
+      line-height: 1;
+    }
+
+    .bomb span {
+      position: relative;
+      z-index: 1;
+      display: block;
+      margin-top: 42px;
+      color: rgba(255,255,255,.74);
+      font-size: 12px;
+      font-weight: 900;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .bomb-stage.critical .fuse i {
+      background: linear-gradient(90deg, #f59e0b, #dc2626);
+    }
+
+    .bomb-stage.critical .spark {
+      color: #dc2626;
+      box-shadow: 0 0 0 6px rgba(220, 38, 38, .16);
+    }
+
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      color: var(--primary);
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .status-chip.warn {
+      background: #fff7ed;
+      color: var(--warn);
+    }
+
+    .status-chip.danger {
+      background: #fef2f2;
+      color: var(--danger);
+    }
+
+    .status-chip.safe {
+      background: #ecfdf5;
+      color: #047857;
+    }
+
+    .summary-note {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .metric {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: var(--surface-2);
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .metric small {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .settings-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    label {
+      display: grid;
+      gap: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .section-head {
+      display: flex;
+      gap: 10px;
+      align-items: start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .section-head p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .subject-grid {
+      display: grid;
+      gap: 9px;
+    }
+
+    .subject-card {
+      display: grid;
+      grid-template-columns: minmax(210px, 1fr) minmax(250px, 1.2fr) minmax(160px, .8fr);
+      gap: 9px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+    }
+
+    .task-list {
+      grid-column: 1 / -1;
+      display: grid;
+      gap: 7px;
+      margin: 2px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .task-item {
+      display: grid;
+      grid-template-columns: minmax(180px, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      padding: 8px;
+      font-size: 13px;
+    }
+
+    .task-item span {
+      line-height: 1.45;
+    }
+
+    .rounds {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      justify-content: flex-end;
+    }
+
+    .round-check {
+      min-width: 34px;
+      min-height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--muted);
+      padding: 4px 7px;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .round-check.active {
+      border-color: transparent;
+      background: var(--safe);
+      color: #fff;
+    }
+
+    .study-log-card,
+    .method-card {
+      margin-bottom: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+    }
+
+    .log-grid {
+      display: grid;
+      grid-template-columns: minmax(210px, 1fr) auto auto;
+      gap: 9px;
+      align-items: end;
+    }
+
+    .flow-action {
+      min-height: 42px;
+      white-space: nowrap;
+    }
+
+    .method-card {
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 13px;
+    }
+
+    .method-card strong {
+      color: var(--text);
+    }
+
+    .strategy-card {
+      margin-bottom: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(180deg, #fff, #f8fcfa);
+      padding: 12px;
+    }
+
+    .strategy-card h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .strategy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .strategy-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 9px;
+    }
+
+    .strategy-item strong,
+    .strategy-lines strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+
+    .strategy-item p,
+    .strategy-lines p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .strategy-lines {
+      display: grid;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .lap-plan {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .lap-step {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-2);
+      padding: 9px;
+    }
+
+    .lap-step strong {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--primary);
+    }
+
+    .lap-step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .lap-step.final {
+      border-color: #f6c96f;
+      background: #fff8e8;
+    }
+
+    .subject-title {
+      min-width: 0;
+    }
+
+    .subject-title strong {
+      display: block;
+      overflow-wrap: anywhere;
+    }
+
+    .subject-title small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .progress-control {
+      display: grid;
+      grid-template-columns: 1fr 46px;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .progress-value {
+      color: var(--primary);
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .stage-panel {
+      display: grid;
+      gap: 8px;
+    }
+
+    .auto-analysis {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .auto-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-2);
+      padding: 9px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .auto-item span,
+    .log-note {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .app-progress-panel {
+      margin-bottom: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background:
+        radial-gradient(circle at 15% 18%, rgba(255,255,255,.2), transparent 42px),
+        linear-gradient(145deg, #0f7c89, #0b5a62);
+      color: #fff;
+      padding: 14px;
+      overflow: hidden;
+    }
+
+    .app-progress-head {
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .app-progress-head h3 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .app-progress-head p {
+      margin: 4px 0 0;
+      color: rgba(255,255,255,.74);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .progress-chip-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 7px;
+      margin-bottom: 12px;
+    }
+
+    .progress-chip {
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 8px;
+      background: rgba(0,0,0,.12);
+      padding: 9px;
+    }
+
+    .progress-chip span {
+      display: block;
+      color: rgba(255,255,255,.72);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .progress-chip strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 18px;
+      line-height: 1.1;
+    }
+
+    .daily-bars {
+      min-height: 180px;
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 9px;
+      align-items: end;
+      margin: 8px 0 12px;
+    }
+
+    .daily-bar {
+      display: grid;
+      gap: 7px;
+      justify-items: center;
+      min-width: 0;
+    }
+
+    .bar-track {
+      position: relative;
+      width: min(34px, 100%);
+      height: 132px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.28);
+      overflow: hidden;
+    }
+
+    .bar-track i {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: var(--value, 0%);
+      border-radius: inherit;
+      background: linear-gradient(180deg, #fef3c7, #34d399);
+      box-shadow: 0 -8px 20px rgba(52, 211, 153, .22);
+    }
+
+    .bar-label {
+      text-align: center;
+      color: rgba(255,255,255,.82);
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+    .mode-main,
+    .mode-button {
+      border: 0;
+      border-radius: 8px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 10px 18px rgba(0,0,0,.18);
+    }
+
+    .mode-main {
+      width: 100%;
+      min-height: 66px;
+      background: #fff;
+      color: var(--primary);
+      font-size: 18px;
+      margin-bottom: 9px;
+    }
+
+    .mode-main span {
+      display: block;
+      color: var(--text);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .mode-button {
+      min-height: 58px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.14);
+      color: #fff;
+      padding: 9px 8px;
+    }
+
+    .auto-item strong {
+      font-size: 14px;
+    }
+
+    .auto-item small {
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .inline-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .compact-number {
+      text-align: right;
+    }
+
+    .aside {
+      display: grid;
+      gap: 14px;
+    }
+
+    .mission-list,
+    .risk-list,
+    .timeline-list {
+      display: grid;
+      gap: 9px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .mission-item,
+    .risk-item,
+    .timeline-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+    }
+
+    .mission-item strong,
+    .risk-item strong,
+    .timeline-item strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .mission-item p,
+    .risk-item p,
+    .timeline-item p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 13px;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 7px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      background: var(--surface-2);
+      color: var(--primary);
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .tag.warn {
+      background: #fff7ed;
+      color: var(--warn);
+    }
+
+    .tag.danger {
+      background: #fef2f2;
+      color: var(--danger);
+    }
+
+    .bar {
+      height: 8px;
+      border-radius: 999px;
+      background: #dce9e5;
+      overflow: hidden;
+    }
+
+    .bar i {
+      display: block;
+      height: 100%;
+      width: var(--value);
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+
+    .data-box {
+      min-height: 94px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 12px;
+      resize: vertical;
+    }
+
+    .source-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 13px;
+    }
+
+    .source-list a {
+      color: var(--primary);
+      font-weight: 900;
+    }
+
+    .restart-card,
+    .past-exam-section {
+      margin-top: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+    }
+
+    .restart-card strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .restart-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 13px;
+    }
+
+    .past-exam-section .section-head {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 1px solid transparent;
+    }
+
+    .past-exam-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .past-exam-card {
+      display: grid;
+      grid-template-columns: minmax(170px, 1.1fr) 120px 90px 88px minmax(150px, 1fr);
+      gap: 9px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+    }
+
+    .past-exam-title strong {
+      display: block;
+    }
+
+    .past-exam-title small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .exam-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .exam-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      border-radius: 8px;
+      background: var(--surface-2);
+      color: var(--primary);
+      padding: 6px 9px;
+      font-size: 12px;
+      font-weight: 900;
+      text-decoration: none;
+    }
+
+    .past-exam-card.done {
+      background: #f8fcfa;
+      border-color: #9bd4c6;
+    }
+
+    .backup-help {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 13px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%) translateY(80px);
+      opacity: 0;
+      transition: .22s ease;
+      z-index: 20;
+      border-radius: 8px;
+      background: var(--ink);
+      color: #fff;
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+      font-weight: 900;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 1040px) {
+      .dashboard,
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .aside {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .topbar,
+      .bomb-board {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        justify-content: flex-start;
+      }
+
+      .strategy-grid,
+      .lap-plan,
+      .metrics,
+      .settings-grid,
+      .log-grid,
+      .aside,
+      .subject-card,
+      .past-exam-card {
+        grid-template-columns: 1fr;
+      }
+
+      .task-item {
+        grid-template-columns: 1fr;
+      }
+
+      .rounds {
+        justify-content: flex-start;
+      }
+
+      .auto-analysis {
+        grid-template-columns: 1fr;
+      }
+
+      .daily-bars {
+        min-height: 150px;
+        gap: 7px;
+      }
+
+      .bar-track {
+        height: 112px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .app {
+        width: min(100% - 18px, 1180px);
+        padding-top: 12px;
+      }
+
+      .summary,
+      .settings,
+      .subject-workspace,
+      .mission,
+      .risk-panel,
+      .timeline,
+      .data-tools,
+      .sources {
+        padding: 12px;
+      }
+
+      .bomb-stage {
+        min-height: 230px;
+      }
+
+      .app-progress-panel {
+        padding: 12px;
+      }
+
+      .progress-chip-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mode-grid {
+        gap: 6px;
+      }
+
+      .mode-button {
+        min-height: 54px;
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">DENKEN 3 LAW TIME BOMB</p>
+        <h1>電験三種 法規 時限爆弾式 学習管理</h1>
+        <p class="lead">2026年8月30日を最終爆発日に固定し、毎週の小さな時限爆弾を解除しながら、法規の到達度と過去問復習を進めます。</p>
+      </div>
+      <div class="actions">
+        <button type="button" id="saveNow" class="primary">保存</button>
+        <button type="button" id="exportData">書き出し</button>
+        <button type="button" id="resetData" class="danger">初期化</button>
+      </div>
+    </header>
+
+    <section class="dashboard">
+      <div class="panel summary">
+        <div class="bomb-board">
+          <div id="bombStage" class="bomb-stage">
+            <div class="fuse" aria-label="導火線"><i id="fuseFill"></i></div>
+            <div class="spark" aria-hidden="true">火</div>
+            <div class="bomb" aria-label="合格爆弾">
+              <strong id="bombTimer">D-0</strong>
+              <span id="bombLabel">armed</span>
+            </div>
+          </div>
+          <div>
+            <p class="eyebrow">COUNTDOWN</p>
+            <h2 id="dashboardTitle">法規爆弾を計算中</h2>
+            <span id="statusChip" class="status-chip">待機中</span>
+            <p id="summaryNote" class="summary-note"></p>
+          </div>
+        </div>
+        <div class="metrics" aria-label="爆弾式学習指標">
+          <div class="metric"><span>合格確率</span><strong id="probability">0%</strong><small>簡易推測</small></div>
+          <div class="metric"><span>次の週次爆弾</span><strong id="fuseDays">0日</strong><small id="blastDateLabel">毎週日曜23:59</small></div>
+          <div class="metric"><span>法規の残り学習量</span><strong id="needHours">0h</strong><small>安全圏まで</small></div>
+          <div class="metric"><span>必要ペース</span><strong id="dailyPace">0h</strong><small>1日あたり</small></div>
+        </div>
+      </div>
+
+      <div class="panel settings">
+        <p class="eyebrow">LAW BOMB SETTINGS</p>
+        <h2>法規爆弾の条件</h2>
+        <div class="settings-grid">
+          <label>今回の目標
+            <select id="examPreset" disabled>
+              <option value="2026-08-30">法規を2026/8/30で取り切る</option>
+            </select>
+          </label>
+          <label>最終爆発日
+            <input id="examDate" type="date" disabled>
+          </label>
+          <label>今週使える法規勉強時間
+            <input id="weeklyHours" type="number" min="1" max="80" step="0.5">
+          </label>
+          <input id="targetReadiness" type="hidden">
+        </div>
+        <p class="summary-note">残り時間の根拠は2つだけです。週次爆弾は毎週日曜23:59、最終爆発日は2026年8月30日です。残り学習量は手入力せず、3周チェック、過去問チェック、学習時間から自動で見積もります。</p>
+        <div class="restart-card">
+          <strong>現在地: ゼロ再スタート</strong>
+          <p id="restartProfile">以前に法規を一度受験済み。携帯アプリで勉強して挑戦したが、約3か月の空白で忘却が進んだため、今回の進捗は0%から再開します。</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="main-grid">
+      <section class="panel subject-workspace" aria-labelledby="subjectHeading">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">LAW DEFUSE BOARD</p>
+            <h2 id="subjectHeading">法規単元別の爆弾パネル</h2>
+            <p>入力は単元ごとの3周チェックに集約しました。学習段階、記憶の手応え、詰まり候補はアプリが自動判定します。</p>
+          </div>
+          <button type="button" id="quickWin" class="ghost">優先単元を選ぶ</button>
+        </div>
+        <div class="study-log-card" aria-label="今日の学習ログ">
+          <div class="log-grid">
+            <label>1. 今日やる単元
+              <select id="logSubject"></select>
+            </label>
+            <button type="button" id="addStudyLog" class="primary flow-action">2. 1時間を記録</button>
+            <button type="button" id="advanceNextCheck" class="ghost flow-action">3. 次を1つ解除</button>
+          </div>
+          <p class="log-note">1時間勉強する日はこの3操作だけでOKです。前回と同じ単元なら「1時間を記録」「次を1つ解除」の2操作で済みます。</p>
+        </div>
+        <div class="app-progress-panel" aria-label="直近の学習状況">
+          <div class="app-progress-head">
+            <div>
+              <h3>直近の学習状況</h3>
+              <p>1日ごとの進捗と、今日使うモードをまとめます。</p>
+            </div>
+            <span class="status-chip safe" id="compactBombStatus">待機中</span>
+          </div>
+          <div class="progress-chip-grid">
+            <div class="progress-chip"><span>爆弾</span><strong id="compactBomb">--</strong></div>
+            <div class="progress-chip"><span>試験まで</span><strong id="compactExamDays">--日</strong></div>
+            <div class="progress-chip"><span>週間滞留</span><strong id="compactWeeklyHold">--%</strong></div>
+          </div>
+          <div id="dailyBars" class="daily-bars" aria-label="7日間の学習進捗バー"></div>
+          <button type="button" id="modeSmart" class="mode-main">おまかせ解除<span>優先単元を選んで今日の対象にする</span></button>
+          <div class="mode-grid" aria-label="学習モード">
+            <button type="button" id="modeUnitList" class="mode-button">単元一覧</button>
+            <button type="button" id="modePastExam" class="mode-button">過去問</button>
+            <button type="button" id="modeStats" class="mode-button">実績</button>
+          </div>
+        </div>
+        <div id="methodNote" class="method-card"></div>
+        <div class="strategy-card" aria-label="note式短期集中攻略メモ">
+          <h3>note式 短期集中攻略メモ</h3>
+          <div class="strategy-grid">
+            <div class="strategy-item">
+              <strong>モデル</strong>
+              <p>公開部分では、約1週間・約30時間で法規を一から回した体験が軸です。</p>
+            </div>
+            <div class="strategy-item">
+              <strong>必要な項目</strong>
+              <p>最低限の解説、単元別過去問、直近過去問、計算問題の解法方針を優先します。</p>
+            </div>
+            <div class="strategy-item">
+              <strong>勉強のコツ</strong>
+              <p>ノート作りより、画面で理解→すぐ過去問。最後は同じ論点の繰り返しに気づくことを重視します。</p>
+            </div>
+          </div>
+          <div class="lap-plan" aria-label="3周の使い分け">
+            <div class="lap-step">
+              <strong>1周目: 最低限を単元別に回す</strong>
+              <p>簡単な解説を見たら、すぐ関連過去問を眺めます。計算分野と非計算分野を分けて、まず全体を通します。</p>
+            </div>
+            <div class="lap-step">
+              <strong>2周目: 直近過去問を総ざらい</strong>
+              <p>単元別・年度別に直近過去問へ目を通します。計算は細かい反復より、解法方針を言える状態を目指します。</p>
+            </div>
+            <div class="lap-step final">
+              <strong>最終周: 間違いだけ本番前確認</strong>
+              <p>記憶量が多い非計算、計算の解法メモ、直近で間違えた過去問だけをスマホでも見返します。</p>
+            </div>
+          </div>
+        </div>
+        <div id="subjectGrid" class="subject-grid"></div>
+        <section class="past-exam-section" aria-labelledby="pastExamHeading">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">PAST QUESTIONS</p>
+              <h2 id="pastExamHeading">法規 過去問10年分ロードマップ</h2>
+              <p id="pastExamSummary">公式PDFを開き、解いたら点数とメモを残します。問題文は転載せず、公式リンクで管理します。</p>
+            </div>
+          </div>
+          <div id="pastExamList" class="past-exam-list"></div>
+        </section>
+      </section>
+
+      <aside class="aside">
+        <section class="panel mission" aria-labelledby="missionHeading">
+          <p class="eyebrow">DEFUSE CODE</p>
+          <h2 id="missionHeading">今日の法規解除コード</h2>
+          <ol id="missionList" class="mission-list"></ol>
+        </section>
+
+        <section class="panel risk-panel" aria-labelledby="riskHeading">
+          <p class="eyebrow">HOT ZONES</p>
+          <h2 id="riskHeading">詰まりやすい法規単元</h2>
+          <ul id="riskList" class="risk-list"></ul>
+        </section>
+
+        <section class="panel timeline" aria-labelledby="timelineHeading">
+          <p class="eyebrow">TIMELINE</p>
+          <h2 id="timelineHeading">導火線ログ</h2>
+          <ul id="timelineList" class="timeline-list"></ul>
+        </section>
+
+        <section class="panel data-tools" aria-labelledby="dataToolsHeading">
+          <p class="eyebrow">BACKUP</p>
+          <h2 id="dataToolsHeading">データ入出力</h2>
+          <p class="backup-help"><strong>使い方:</strong> 普段は自動保存です。別端末へ移す・バックアップを残すときは「書き出し」を押してJSONを保管します。復元するときはJSONを貼り付けて「JSONから復元」を押します。</p>
+          <textarea id="dataBox" class="data-box" placeholder="書き出しボタンでJSONが表示されます。貼り付けて復元もできます。"></textarea>
+          <div class="actions" style="justify-content:flex-start;margin-top:8px">
+            <button type="button" id="exportDataPanel">書き出し</button>
+            <button type="button" id="importData">JSONから復元</button>
+            <button type="button" id="clearDataBox" class="ghost">欄を空にする</button>
+          </div>
+        </section>
+
+        <section class="panel sources" aria-labelledby="sourcesHeading">
+          <p class="eyebrow">INFO</p>
+          <h2 id="sourcesHeading">試験情報メモ</h2>
+          <ul class="source-list">
+            <li><a href="https://www.shiken.or.jp/chief/third/" target="_blank" rel="noreferrer">試験日程</a>: 今回の法規爆弾は、筆記方式の2026年8月30日を最終爆発日に固定。</li>
+            <li><a href="https://www.shiken.or.jp/chief/third/overview/" target="_blank" rel="noreferrer">試験概要</a>: 第三種電気主任技術者試験の科目のうち、今回は法規の合格を狙う設定です。</li>
+            <li><a href="https://www.shiken.or.jp/chief/third/qa/" target="_blank" rel="noreferrer">公式の問題と解答</a>: 過去問PDFと解答PDFは公式ページから開きます。</li>
+            <li><a href="https://play.google.com/store/apps/details?id=jp.studyplus.android.app&hl=ja" target="_blank" rel="noreferrer">Studyplus</a>: 勉強時間を教材ごとに記録して見える化する考え方を参考にしました。</li>
+            <li><a href="https://docs.ankiweb.net/studying.html" target="_blank" rel="noreferrer">Anki Manual</a>: 復習時に簡単な評価ボタンで次の復習を決める考え方を参考にしました。</li>
+            <li><a href="https://journals.sagepub.com/doi/10.1177/1529100612453266" target="_blank" rel="noreferrer">学習法レビュー</a>: 練習テストと分散学習を強く重視する設計にしました。</li>
+            <li><a href="https://www.retrievalpractice.org/why-it-works" target="_blank" rel="noreferrer">Retrieval Practice</a>: 「見直す」より「思い出す」練習を増やす根拠として参照しています。</li>
+            <li><a href="https://note.com/elec001/n/nbc369470385f" target="_blank" rel="noreferrer">短期合格体験note</a>: 30時間・2周・過去問重視の流れを主参考にしました。</li>
+            <li><a href="https://denken-muscle.com/low/boss.html" target="_blank" rel="noreferrer">でんけんマッスル 法規攻略</a>: 難易度、重要分野、勉強順序の補助参考にしました。</li>
+          </ul>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const STORAGE_KEY = "denken3-law-bomb-study-v3";
+    const OFFICIAL_PRESETS = ["2026-08-30"];
+    const TARGET_READINESS = 76;
+    const LOG_RESULTS = {
+      read: { label: "読んだ・確認した" },
+      solved: { label: "問題を解いた" },
+      reviewed: { label: "翌日復習できた" }
+    };
+    const TASK_ROUNDS = 3;
+
+    function makeTasks(labels) {
+      return labels.map(([id, label]) => ({ id, label, checks: 0 }));
+    }
+
+    const DEFAULT_STATE = {
+      examDate: "2026-08-30",
+      weeklyHours: 12,
+      targetReadiness: TARGET_READINESS,
+      lastLogSubject: "technical_standard",
+      logs: [],
+      profile: {
+        status: "zero_restart",
+        previousAttempt: true,
+        previousStudyTool: "携帯アプリ",
+        gapMonths: 3,
+        note: "法規を一度受験済み。携帯アプリで勉強して挑戦したが、約3か月の空白で忘却が進んだため、今回の進捗は0%から再開する。"
+      },
+      subjects: [
+        { id: "electricity_business", name: "電気事業法・主任技術者制度", code: "事", weight: 14, progress: 0, confidence: 1, weakCount: 0, baseHours: 10, exempt: false, weakNote: "", difficulty: "★★★ / 毎回級", required: "目的・定義・保安規制・主任技術者", tip: "最初に全体像を作る。条文は義務の理由とセットで覚える。", focus: "主任技術者、保安規程、電気事業法の基本語句を固める", tasks: makeTasks([["purpose", "電気事業法の目的・用語"], ["chief", "主任技術者の選任・外部委託"], ["safety", "保安規程・届出"], ["report", "事故報告・立入検査"]]) },
+        { id: "technical_standard", name: "電気設備技術基準・解釈", code: "技", weight: 28, progress: 0, confidence: 1, weakCount: 0, baseHours: 18, exempt: false, weakNote: "", difficulty: "★★★ / 最重要", required: "感電防止・絶縁・接地・電線路・電圧区分", tip: "低圧/高圧/特高の区分から規定をひも付ける。数値は表で比較。", focus: "接地、絶縁、電線路、低高圧の数値条件を優先して暗記", tasks: makeTasks([["grounding", "接地工事の種類・抵抗値"], ["insulation", "絶縁抵抗・絶縁耐力"], ["lines", "低圧/高圧電線路の施設"], ["breaker", "過電流遮断器・漏電遮断器"], ["distance", "支持物・離隔距離"]]) },
+        { id: "facility_management", name: "電気施設管理", code: "施", weight: 18, progress: 0, confidence: 1, weakCount: 0, baseHours: 12, exempt: false, weakNote: "", difficulty: "★★☆ / 実務整理", required: "保守・点検・事故防止・負荷管理", tip: "丸暗記より設備の流れで整理。点検、記録、事故対応をつなげる。", focus: "需要設備、保守、事故防止、点検周期を実務イメージで整理", tasks: makeTasks([["inspection", "需要設備の点検・測定"], ["maintenance", "保守計画・停電作業"], ["accident", "事故防止・感電防止"], ["load", "負荷管理・省エネ"], ["record", "記録・報告の流れ"]]) },
+        { id: "related_laws", name: "報告・告示・関連法令", code: "関", weight: 10, progress: 0, confidence: 1, weakCount: 0, baseHours: 7, exempt: false, weakNote: "", difficulty: "★★☆ / 高頻度", required: "事故報告・主任技術者選任・電気工事士法・電気用品安全法", tip: "対象、期限、義務者を横並びで比較。細部は過去問で回収。", focus: "報告・告示と関連法令を過去問ベースで補強", tasks: makeTasks([["reporting", "事故報告・告示"], ["worker", "電気工事士法"], ["appliance", "電気用品安全法"], ["procedure", "届出・罰則・用語"]]) },
+        { id: "law_calculation", name: "法規計算", code: "計", weight: 20, progress: 0, confidence: 1, weakCount: 0, baseHours: 14, exempt: false, weakNote: "", difficulty: "★★★ / 失点注意", required: "需要率・負荷率・不等率・力率・電力損失", tip: "後回し禁止。公式を読むより小問で使って、計算パターンを固定する。", focus: "需要率、負荷率、不等率、力率改善を定義から固定", tasks: makeTasks([["demand", "需要率・不等率・負荷率"], ["power_factor", "力率改善"], ["voltage_drop", "電圧降下・電線選定"], ["short_circuit", "短絡電流・遮断容量"], ["ground_calc", "接地・絶縁の計算"]]) },
+        { id: "past_questions", name: "過去問演習・条文暗記", code: "過", weight: 10, progress: 0, confidence: 1, weakCount: 0, baseHours: 11, exempt: false, weakNote: "", difficulty: "必須 / 仕上げ", required: "5年分以上の傾向確認、10年分の3周、間違いカード化", tip: "解くだけで終わらせず、採点後に間違い条文と数値だけ翌日復習。", focus: "単元別に解き、間違えた条文と数値だけを翌日に再解除", tasks: makeTasks([["annual", "年度別に解く"], ["score", "採点して間違いを分類"], ["cards", "条文・数値をカード化"], ["review", "翌日復習と再演習"]]) }
+      ],
+      pastExams: [
+        { id: "2026-03-r7-lower", label: "令和7年度 下期", date: "2026-03-22", problemUrl: "https://www.shiken.or.jp/chief/upload/20260322_ch_third_q04.pdf", answerUrl: "https://www.shiken.or.jp/chief/upload/20260322_ch_third_a01.pdf", status: "not-started", score: "", memo: "", rounds: 0 },
+        { id: "2025-08-r7-upper", label: "令和7年度 上期", date: "2025-08-31", problemUrl: "https://www.shiken.or.jp/chief/upload/20250831_ch_third_q04.pdf", answerUrl: "https://www.shiken.or.jp/chief/upload/20250831_ch_third_a01.pdf", status: "not-started", score: "", memo: "", rounds: 0 },
+        { id: "2025-03-r6-lower", label: "令和6年度 下期", date: "2025-03-23", problemUrl: "https://www.shiken.or.jp/chief/upload/20250323_ch_third_q04.pdf", answerUrl: "https://www.shiken.or.jp/chief/upload/2024_3_2.pdf", status: "not-started", score: "", memo: "", rounds: 0 },
+        { id: "2024-08-r6-upper", label: "令和6年度 上期", date: "2024-08-18", problemUrl: "https://www.shiken.or.jp/chief/upload/20240818_ch_third_q04.pdf", answerUrl: "https://www.shiken.or.jp/chief/upload/20240818_ch_third_a01.pdf", status: "not-started", score: "", memo: "", rounds: 0 },
+        { id: "2024-03-r5-lower", label: "令和5年度 下期", date: "2024-03-24", problemUrl: "https://www.shiken.or.jp/chief/upload/20240324_ch_third_q04.pdf", answerUrl: "https://www.shiken.or.jp/chief/upload/20240324_ch_third_a01.pdf", status: "not-started", score: "", memo: "", rounds: 0 },
+        { id: "2023-08-r5-upper", label: "令和5年度 上期", date: "2023-08-20", problemUrl: "https://www.shiken.or.jp/chief/upload/20230820_ch_third_q04.pdf", answerUrl: "https://www.shiken.or.jp/chief/upload/20230820_ch_third_a01.pdf", status: "not-started", score: "", memo: "", rounds: 0 },
+        { id: "2023-03-r4-lower", label: "令和4年度 下期", date: "2023-03-26", problemUrl: "https://www.shiken.or.jp/chief/upload/20230326_ch_third_q04.pdf", answerUrl: "https://www.shiken.or.jp/chief/upload/20230326_ch_third_a01.pdf", status: "not-started", score: "", memo: "", rounds: 0 },
+        { id: "2022-08-r4-upper", label: "令和4年度 上期", date: "2022-08-21", problemUrl: "https://www.shiken.or.jp/chief/upload/20220821_ch_third_q04.pdf", answerUrl: "https://www.shiken.or.jp/chief/upload/20220821_ch_third_a01.pdf", status: "not-started", score: "", memo: "", rounds: 0 },
+        { id: "2021-08-r3", label: "令和3年度", date: "2021-08-22", problemUrl: "https://www.shiken.or.jp/chief/upload/20210822_ch_third_q04.pdf", answerUrl: "https://www.shiken.or.jp/chief/upload/20210822_ch_third_a01.pdf", status: "not-started", score: "", memo: "", rounds: 0 },
+        { id: "2020-09-r2", label: "令和2年度", date: "2020-09-13", problemUrl: "https://www.shiken.or.jp/chief/upload/20200913_ch_third_q04.pdf", answerUrl: "https://www.shiken.or.jp/chief/upload/20200913_ch_third_a01.pdf", status: "not-started", score: "", memo: "", rounds: 0 },
+        { id: "2019-09-r1", label: "令和元年度", date: "2019-09-01", problemUrl: "https://www.shiken.or.jp/chief/upload/20190901_ch_third_q04.pdf", answerUrl: "https://www.shiken.or.jp/chief/upload/20190901_ch_third_a01.pdf", status: "not-started", score: "", memo: "", rounds: 0 },
+        { id: "2018-09-h30", label: "平成30年度", date: "2018-09-02", problemUrl: "https://www.shiken.or.jp/chief/upload/20180902_ch_third_q04.pdf", answerUrl: "https://www.shiken.or.jp/chief/upload/20180902_ch_third_a01.pdf", status: "not-started", score: "", memo: "", rounds: 0 },
+        { id: "2017-09-h29", label: "平成29年度", date: "2017-09-03", problemUrl: "https://www.shiken.or.jp/chief/upload/20170903_ch_third_q04.pdf", answerUrl: "https://www.shiken.or.jp/chief/upload/20170903_ch_third_a01.pdf", status: "not-started", score: "", memo: "", rounds: 0 },
+        { id: "2016-09-h28", label: "平成28年度", date: "2016-09-04", problemUrl: "https://www.shiken.or.jp/chief/upload/20160904_ch_third_q04.pdf", answerUrl: "https://www.shiken.or.jp/chief/upload/20160904_ch_third_a01.pdf", status: "not-started", score: "", memo: "", rounds: 0 }
+      ]
+    };
+
+    let state = loadState();
+    let saveTimer = null;
+
+    const $ = (selector) => document.querySelector(selector);
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+    const percent = (value) => `${Math.round(clamp(value, 0, 100))}%`;
+    const hours = (value) => `${Number.isFinite(value) ? Math.max(0, value).toFixed(value >= 10 ? 0 : 1) : "0"}h`;
+
+    const elements = {
+      bombStage: $("#bombStage"),
+      fuseFill: $("#fuseFill"),
+      bombTimer: $("#bombTimer"),
+      bombLabel: $("#bombLabel"),
+      dashboardTitle: $("#dashboardTitle"),
+      statusChip: $("#statusChip"),
+      summaryNote: $("#summaryNote"),
+      probability: $("#probability"),
+      fuseDays: $("#fuseDays"),
+      blastDateLabel: $("#blastDateLabel"),
+      needHours: $("#needHours"),
+      dailyPace: $("#dailyPace"),
+      examPreset: $("#examPreset"),
+      examDate: $("#examDate"),
+      weeklyHours: $("#weeklyHours"),
+      targetReadiness: $("#targetReadiness"),
+      logSubject: $("#logSubject"),
+      addStudyLog: $("#addStudyLog"),
+      advanceNextCheck: $("#advanceNextCheck"),
+      compactBombStatus: $("#compactBombStatus"),
+      compactBomb: $("#compactBomb"),
+      compactExamDays: $("#compactExamDays"),
+      compactWeeklyHold: $("#compactWeeklyHold"),
+      dailyBars: $("#dailyBars"),
+      modeSmart: $("#modeSmart"),
+      modeUnitList: $("#modeUnitList"),
+      modePastExam: $("#modePastExam"),
+      modeStats: $("#modeStats"),
+      methodNote: $("#methodNote"),
+      subjectGrid: $("#subjectGrid"),
+      restartProfile: $("#restartProfile"),
+      pastExamSummary: $("#pastExamSummary"),
+      pastExamList: $("#pastExamList"),
+      missionList: $("#missionList"),
+      riskList: $("#riskList"),
+      timelineList: $("#timelineList"),
+      dataBox: $("#dataBox"),
+      toast: $("#toast")
+    };
+
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+        if (!saved || !Array.isArray(saved.subjects)) return structuredClone(DEFAULT_STATE);
+        return mergeState(structuredClone(DEFAULT_STATE), saved);
+      } catch {
+        return structuredClone(DEFAULT_STATE);
+      }
+    }
+
+    function mergeState(defaults, saved) {
+      defaults.examDate = saved.examDate || defaults.examDate;
+      defaults.weeklyHours = Number(saved.weeklyHours) || defaults.weeklyHours;
+      defaults.targetReadiness = TARGET_READINESS;
+      defaults.lastLogSubject = saved.lastLogSubject || defaults.lastLogSubject;
+      defaults.logs = Array.isArray(saved.logs) ? saved.logs.map(sanitizeLog).filter(Boolean).slice(-500) : defaults.logs;
+      defaults.profile = { ...defaults.profile, ...(saved.profile || {}) };
+      defaults.subjects = defaults.subjects.map((subject) => {
+        const savedSubject = saved.subjects.find((item) => item.id === subject.id);
+        if (!savedSubject) return subject;
+        return { ...subject, ...sanitizeSubject(savedSubject), tasks: mergeTasks(subject.tasks, savedSubject.tasks) };
+      });
+      defaults.pastExams = defaults.pastExams.map((exam) => {
+        const savedExam = (saved.pastExams || []).find((item) => item.id === exam.id);
+        return savedExam ? { ...exam, ...sanitizePastExam(savedExam) } : exam;
+      });
+      return defaults;
+    }
+
+    function sanitizeSubject(subject) {
+      return {
+        id: subject.id,
+        name: String(subject.name || "").slice(0, 20),
+        code: String(subject.code || "").slice(0, 2),
+        weight: clamp(Number(subject.weight) || 20, 1, 40),
+        progress: clamp(Number(subject.progress) || 0, 0, 100),
+        confidence: clamp(Number(subject.confidence) || 1, 1, 5),
+        weakCount: clamp(Number(subject.weakCount) || 0, 0, 12),
+        baseHours: clamp(Number(subject.baseHours) || 30, 1, 200),
+        exempt: Boolean(subject.exempt),
+        weakNote: String(subject.weakNote || "").slice(0, 120),
+        focus: String(subject.focus || "").slice(0, 80),
+        tasks: Array.isArray(subject.tasks) ? subject.tasks.map(sanitizeTask).filter(Boolean) : []
+      };
+    }
+
+    function sanitizeTask(task) {
+      if (!task || !task.id) return null;
+      return {
+        id: String(task.id).slice(0, 40),
+        label: String(task.label || "").slice(0, 80),
+        checks: clamp(Number(task.checks) || 0, 0, TASK_ROUNDS)
+      };
+    }
+
+    function mergeTasks(defaultTasks, savedTasks) {
+      const savedList = Array.isArray(savedTasks) ? savedTasks : [];
+      return defaultTasks.map((task) => {
+        const savedTask = savedList.find((item) => item.id === task.id);
+        return savedTask ? { ...task, checks: clamp(Number(savedTask.checks) || 0, 0, TASK_ROUNDS) } : task;
+      });
+    }
+
+    function sanitizeLog(log) {
+      const subjectId = String(log.subjectId || "");
+      const date = new Date(log.date);
+      if (!subjectId || Number.isNaN(date.getTime())) return null;
+      return {
+        subjectId,
+        date: date.toISOString(),
+        minutes: clamp(Number(log.minutes) || 0, 0, 240),
+        result: LOG_RESULTS[log.result] ? log.result : "read"
+      };
+    }
+
+    function sanitizePastExam(exam) {
+      return {
+        status: ["not-started", "working", "scored", "reviewed"].includes(exam.status) ? exam.status : "not-started",
+        score: String(exam.score ?? "").slice(0, 8),
+        memo: String(exam.memo || "").slice(0, 140),
+        rounds: clamp(Number(exam.rounds) || 0, 0, TASK_ROUNDS)
+      };
+    }
+
+    function daysUntilExam() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const target = new Date(`${state.examDate}T00:00:00`);
+      if (Number.isNaN(target.getTime())) return 0;
+      return Math.max(0, Math.ceil((target - today) / 86400000));
+    }
+
+    function addDays(days) {
+      const date = new Date();
+      date.setHours(0, 0, 0, 0);
+      date.setDate(date.getDate() + days);
+      return date;
+    }
+
+    function formatDate(date) {
+      if (typeof date === "string") date = new Date(`${date}T00:00:00`);
+      if (Number.isNaN(date.getTime())) return "未設定";
+      return date.toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric", weekday: "short" });
+    }
+
+    function nextWeeklyBomb() {
+      const target = new Date();
+      target.setHours(23, 59, 0, 0);
+      target.setDate(target.getDate() + ((7 - target.getDay()) % 7));
+      if (target <= new Date()) target.setDate(target.getDate() + 7);
+      return target;
+    }
+
+    function formatRemaining(target) {
+      const ms = Math.max(0, target - new Date());
+      const totalHours = Math.floor(ms / 3600000);
+      const days = Math.floor(totalHours / 24);
+      const hoursLeft = totalHours % 24;
+      if (days <= 0 && hoursLeft <= 0) return "1時間未満";
+      if (days <= 0) return `${hoursLeft}時間`;
+      return `${days}日${hoursLeft}時間`;
+    }
+
+    function weekStart() {
+      const date = new Date();
+      date.setHours(0, 0, 0, 0);
+      const mondayOffset = (date.getDay() + 6) % 7;
+      date.setDate(date.getDate() - mondayOffset);
+      return date;
+    }
+
+    function logsThisWeek() {
+      const start = weekStart();
+      return state.logs.filter((log) => new Date(log.date) >= start);
+    }
+
+    function dailyProgress() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const dayNames = ["日", "月", "火", "水", "木", "金", "土"];
+      return Array.from({ length: 7 }, (_, index) => {
+        const date = new Date(today);
+        date.setDate(today.getDate() - (6 - index));
+        const next = new Date(date);
+        next.setDate(date.getDate() + 1);
+        const minutes = state.logs
+          .filter((log) => {
+            const loggedAt = new Date(log.date);
+            return loggedAt >= date && loggedAt < next;
+          })
+          .reduce((sum, log) => sum + log.minutes, 0);
+        return {
+          day: date.getDate(),
+          week: dayNames[date.getDay()],
+          minutes,
+          progress: clamp(minutes / 60 * 100, 0, 100)
+        };
+      });
+    }
+
+    function subjectMinutes(subjectId) {
+      return state.logs
+        .filter((log) => log.subjectId === subjectId)
+        .reduce((sum, log) => sum + log.minutes, 0);
+    }
+
+    function taskScore(subject) {
+      if (!subject.tasks?.length) return subject.progress;
+      const done = subject.tasks.reduce((sum, task) => sum + clamp(Number(task.checks) || 0, 0, TASK_ROUNDS), 0);
+      return clamp(done / (subject.tasks.length * TASK_ROUNDS) * 100, 0, 100);
+    }
+
+    function taskSummary(subject) {
+      const total = (subject.tasks?.length || 0) * TASK_ROUNDS;
+      const done = (subject.tasks || []).reduce((sum, task) => sum + clamp(Number(task.checks) || 0, 0, TASK_ROUNDS), 0);
+      return { done, total, score: total ? done / total * 100 : subject.progress };
+    }
+
+    function analyzeSubject(subject) {
+      const tasks = subject.tasks || [];
+      const summary = taskSummary(subject);
+      const taskChecks = tasks.map((task) => clamp(Number(task.checks) || 0, 0, TASK_ROUNDS));
+      const taskCount = tasks.length;
+      const round1 = taskChecks.filter((count) => count >= 1).length;
+      const round2 = taskChecks.filter((count) => count >= 2).length;
+      const finalRound = taskChecks.filter((count) => count >= 3).length;
+      const checklistScore = summary.score;
+      const score = subject.id === "past_questions"
+        ? Math.max(checklistScore, Number(subject.progress) || 0)
+        : checklistScore;
+      const activeMinutes = subjectMinutes(subject.id);
+      const minCheck = taskChecks.length ? Math.min(...taskChecks) : 0;
+      const maxCheck = taskChecks.length ? Math.max(...taskChecks) : 0;
+      const weakTasks = tasks
+        .filter((task) => clamp(Number(task.checks) || 0, 0, TASK_ROUNDS) === minCheck && minCheck < TASK_ROUNDS)
+        .slice(0, 2)
+        .map((task) => task.label);
+
+      let stageLabel = "未着手";
+      let stageReason = "まだ3周チェックが入っていません。";
+      if (score >= 100 || (taskCount > 0 && finalRound === taskCount)) {
+        stageLabel = "解除完了";
+        stageReason = "全項目が最終チェックまで完了しています。";
+      } else if (taskCount > 0 && (finalRound > 0 || round2 === taskCount)) {
+        stageLabel = "最終確認中";
+        stageReason = "2周目まで終えた項目を本番前確認に進めています。";
+      } else if (taskCount > 0 && (round2 > 0 || round1 === taskCount)) {
+        stageLabel = "2周目中";
+        stageReason = "1周目を広く触り、理解の穴を潰す段階です。";
+      } else if (round1 > 0 || activeMinutes > 0) {
+        stageLabel = "1周目中";
+        stageReason = "最低限理解と関連過去問で全体像を作る段階です。";
+      }
+
+      let confidence = 1;
+      let memoryLabel = "記憶未形成";
+      let memoryReason = "まず1周目チェックを入れると分析が始まります。";
+      if (score >= 95) {
+        confidence = 5;
+        memoryLabel = "安定";
+        memoryReason = "ほぼ全項目が最終確認まで届いています。";
+      } else if (score >= 70) {
+        confidence = 4;
+        memoryLabel = "問題で使える";
+        memoryReason = "2周目以降の項目が増え、本番形式に寄ってきています。";
+      } else if (score >= 40) {
+        confidence = 3;
+        memoryLabel = "見れば戻る";
+        memoryReason = "1周目は進んでいます。次は同じ論点を再チェックします。";
+      } else if (score > 0 || activeMinutes > 0) {
+        confidence = 2;
+        memoryLabel = "まだ薄い";
+        memoryReason = "触れ始めていますが、反復回数はまだ少なめです。";
+      }
+
+      let weakCount = score >= 95 ? 0 : score >= 75 ? 1 : score >= 50 ? 2 : score > 0 ? 3 : 4;
+      if (maxCheck - minCheck >= 2 && weakCount < 4) weakCount += 1;
+      const weakLabel = weakCount === 0 ? "詰まりなし" : weakCount === 1 ? "軽い抜け" : weakCount === 2 ? "要復習" : weakCount === 3 ? "詰まり強め" : "未解除";
+      const weakText = weakTasks.length
+        ? `詰まり候補: ${weakTasks.join("、")}`
+        : score >= 100 ? "全項目が解除済みです。" : subject.focus;
+      const readiness = clamp(score * .78 + (confidence - 1) / 4 * 100 * .22 - weakCount * 3.5, 0, 100);
+
+      return {
+        score,
+        readiness,
+        confidence,
+        memoryLabel,
+        memoryReason,
+        weakCount,
+        weakLabel,
+        weakText,
+        stageLabel,
+        stageReason,
+        round1,
+        round2,
+        finalRound,
+        taskCount
+      };
+    }
+
+    function roundButtons(count, className = "round-check") {
+      const labels = ["1周", "2周", "最終"];
+      return [1, 2, 3].map((round) => `
+        <button type="button" class="${className}${count >= round ? " active" : ""}" data-round="${round}" aria-label="${labels[round - 1]}">
+          ${labels[round - 1]}
+        </button>
+      `).join("");
+    }
+
+    function examStatusLabel(exam) {
+      if (exam.status === "reviewed") return "復習済み";
+      if (exam.score) return "採点済み";
+      if ((exam.rounds || 0) > 0) return "演習中";
+      return "未着手";
+    }
+
+    function subjectReadiness(subject) {
+      if (subject.exempt) return 100;
+      return analyzeSubject(subject).readiness;
+    }
+
+    function subjectNeed(subject, analysis = analyzeSubject(subject)) {
+      if (subject.exempt) return 0;
+      const gap = 1 - analysis.readiness / 100;
+      const weakBoost = 1 + analysis.weakCount * .07;
+      return clamp(subject.baseHours * gap * weakBoost, 0, 240);
+    }
+
+    function getStats() {
+      const days = daysUntilExam();
+      const dailyCapacity = Math.max(.1, state.weeklyHours / 7);
+      const totalCapacity = dailyCapacity * days;
+      const weekMinutes = logsThisWeek().reduce((sum, log) => sum + log.minutes, 0);
+      const weekTargetMinutes = Math.max(60, state.weeklyHours * 60);
+      const weeklyProgress = clamp(weekMinutes / weekTargetMinutes * 100, 0, 100);
+      const weeklyBombAt = nextWeeklyBomb();
+      const subjectStats = state.subjects.map((subject) => {
+        const analysis = analyzeSubject(subject);
+        return {
+          subject,
+          analysis,
+          readiness: subject.exempt ? 100 : analysis.readiness,
+          need: subjectNeed(subject, analysis),
+          minutes: subjectMinutes(subject.id)
+        };
+      });
+      const totalWeight = state.subjects.reduce((sum, subject) => sum + subject.weight, 0) || 1;
+      const readiness = subjectStats.reduce((sum, entry) => sum + entry.readiness * entry.subject.weight, 0) / totalWeight;
+      const need = subjectStats.reduce((sum, entry) => sum + entry.need, 0);
+      const buffer = totalCapacity - need;
+      const fuseDays = Math.floor(buffer / dailyCapacity);
+      const weakPenalty = subjectStats.reduce((sum, entry) => sum + (entry.subject.exempt ? 0 : entry.analysis.weakCount), 0) * 1.15;
+      const bufferScore = clamp(buffer / Math.max(need, 1) * 38, -38, 28);
+      const weekMomentum = clamp((weeklyProgress - 60) / 4, -12, 10);
+      const pressure = days <= 14 ? -8 : days <= 30 ? -4 : 0;
+      const x = (readiness - state.targetReadiness + bufferScore - weakPenalty + weekMomentum + pressure) / 9;
+      const probability = clamp(100 / (1 + Math.exp(-x)), 2, 98);
+      return { days, dailyCapacity, totalCapacity, subjectStats, readiness, need, buffer, fuseDays, probability, weekMinutes, weekTargetMinutes, weeklyProgress, weeklyBombAt };
+    }
+
+    function riskLevel(stats) {
+      if (stats.weeklyProgress >= 100 && stats.fuseDays >= 0) return { key: "safe", label: "今週解除済み", className: "safe", message: "今週の学習時間は目標に届いています。次は復習済みの単元を増やしましょう。" };
+      if (stats.fuseDays < 0) return { key: "detonation", label: "爆発圏", className: "danger", message: "このペースだと8月30日までに法規の残り学習量が入り切りません。今日の記録を1つ入れて、優先単元を進めましょう。" };
+      if (stats.weeklyProgress < 40 && stats.fuseDays <= 7) return { key: "critical", label: "週次爆弾が近い", className: "danger", message: "今週の解除率が低いまま週次爆弾が近づいています。技術基準か法規計算を30分だけ進めるのが最短です。" };
+      if (stats.weeklyProgress < 70) return { key: "armed", label: "作動中", className: "warn", message: "今週の解除率はまだ途中です。今日の学習ログを積むと爆弾の表示が落ち着きます。" };
+      return { key: "safe", label: "解除圏内", className: "safe", message: "今週の解除はかなり進んでいます。忘却対策として翌日復習OKの単元を増やしましょう。" };
+    }
+
+    function prioritySubjects() {
+      return getStats().subjectStats
+        .filter((entry) => !entry.subject.exempt)
+        .map((entry) => ({
+          ...entry,
+          priority: entry.need * (1 + entry.analysis.weakCount * .1) * (entry.subject.weight / 20)
+        }))
+        .sort((a, b) => b.priority - a.priority);
+    }
+
+    function render() {
+      syncControls();
+      const stats = getStats();
+      renderDashboard(stats);
+      renderProgressBoard(stats);
+      renderSubjects(stats);
+      renderPastExams();
+      renderMissions(stats);
+      renderRisk(stats);
+      renderTimeline(stats);
+      scheduleSave();
+    }
+
+    function syncControls() {
+      elements.examDate.value = state.examDate;
+      elements.weeklyHours.value = state.weeklyHours;
+      elements.targetReadiness.value = state.targetReadiness;
+      elements.examPreset.value = OFFICIAL_PRESETS.includes(state.examDate) ? state.examDate : "custom";
+      const selected = state.subjects.some((subject) => subject.id === state.lastLogSubject) ? state.lastLogSubject : state.subjects[0].id;
+      elements.logSubject.innerHTML = state.subjects.map((subject) => `<option value="${subject.id}"${subject.id === selected ? " selected" : ""}>${subject.name}</option>`).join("");
+    }
+
+    function renderDashboard(stats) {
+      const level = riskLevel(stats);
+      const fuseRatio = stats.days <= 0 ? 0 : clamp(stats.fuseDays / stats.days * 100, 0, 100);
+      const displayFuseDays = Math.max(0, stats.fuseDays);
+      const finalExam = new Date(`${state.examDate}T00:00:00`);
+      const weeklyCountdown = formatRemaining(stats.weeklyBombAt);
+      const finalCountdown = formatRemaining(finalExam);
+      elements.fuseFill.style.setProperty("--fuse", `${fuseRatio}%`);
+      elements.bombStage.classList.toggle("critical", level.key === "critical" || level.key === "detonation");
+      elements.bombTimer.textContent = level.key === "detonation" ? "NOW" : weeklyCountdown;
+      elements.bombLabel.textContent = level.label;
+      elements.dashboardTitle.textContent = `次の週次爆弾: ${formatDate(stats.weeklyBombAt)} 23:59`;
+      elements.statusChip.className = `status-chip ${level.className}`;
+      elements.statusChip.textContent = `${level.label} / 今週 ${Math.round(stats.weeklyProgress)}%`;
+      elements.summaryNote.textContent = `${level.message} 今週は ${hours(stats.weekMinutes / 60)} / ${hours(stats.weekTargetMinutes / 60)}、最終爆発日までは ${finalCountdown} です。`;
+      elements.probability.textContent = percent(stats.probability);
+      elements.fuseDays.textContent = weeklyCountdown;
+      elements.blastDateLabel.textContent = `最終まで ${finalCountdown}`;
+      elements.needHours.textContent = hours(stats.need);
+      elements.dailyPace.textContent = stats.days > 0 ? hours(stats.need / stats.days) : hours(stats.need);
+      elements.methodNote.innerHTML = `
+        <strong>効率ルール</strong>: 主参考はnoteの短期集中法です。ノート作りに寄せず、単元別に最低限を理解したらすぐ過去問を見ます。
+        1周目は「最低限理解→関連過去問」、2周目は「直近過去問総ざらい」、最終周は「間違い・計算方針・記憶量が多い非計算だけ確認」を目安にします。
+        過去問で同じ論点が繰り返されることを早く掴むため、チェックリストと過去問回数を爆弾進捗に強く反映します。
+      `;
+    }
+
+    function renderProgressBoard(stats) {
+      const level = riskLevel(stats);
+      const weeklyHold = clamp(100 - stats.weeklyProgress, 0, 100);
+      elements.compactBombStatus.className = `status-chip ${level.className}`;
+      elements.compactBombStatus.textContent = level.label;
+      elements.compactBomb.textContent = percent(stats.probability);
+      elements.compactExamDays.textContent = `${stats.days}日`;
+      elements.compactWeeklyHold.textContent = percent(weeklyHold);
+      elements.dailyBars.innerHTML = dailyProgress().map((day) => `
+        <div class="daily-bar">
+          <div class="bar-track" title="${day.minutes}分"><i style="--value:${percent(day.progress)}"></i></div>
+          <div class="bar-label">${day.day}<br>${day.week}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderSubjects(stats) {
+      elements.subjectGrid.innerHTML = stats.subjectStats.map((entry, index) => {
+        const subject = entry.subject;
+        const checklist = taskSummary(subject);
+        const analysis = entry.analysis || analyzeSubject(subject);
+        return `
+          <div class="subject-card" data-subject-index="${index}">
+            <div class="subject-title">
+              <strong>${subject.name}</strong>
+              <small>${subject.focus}</small>
+              <div class="strategy-lines">
+                <p><strong>難易度</strong>${escapeHtml(subject.difficulty || "確認中")}</p>
+                <p><strong>必要な項目</strong>${escapeHtml(subject.required || subject.focus)}</p>
+                <p><strong>コツ</strong>${escapeHtml(subject.tip || "過去問で出た形に戻して覚えます。")}</p>
+              </div>
+              <div class="tag-row">
+                <span class="tag">法規到達度 ${percent(entry.readiness)}</span>
+                <span class="tag">3周 ${checklist.done}/${checklist.total}</span>
+                <span class="tag">${analysis.stageLabel}</span>
+                <span class="tag${analysis.weakCount >= 3 ? " warn" : ""}">${analysis.weakLabel}</span>
+                <span class="tag${entry.need > 35 ? " warn" : ""}">解除残り ${hours(entry.need)}</span>
+                <span class="tag">累計 ${hours(entry.minutes / 60)}</span>
+              </div>
+            </div>
+            <div class="auto-analysis" aria-label="${subject.name}の自動分析">
+              <div class="auto-item">
+                <span>学習段階</span>
+                <strong>${analysis.stageLabel}</strong>
+                <small>${analysis.stageReason}</small>
+              </div>
+              <div class="auto-item">
+                <span>記憶の手応え</span>
+                <strong>${analysis.memoryLabel}</strong>
+                <small>${analysis.memoryReason}</small>
+              </div>
+              <div class="auto-item">
+                <span>詰まり候補</span>
+                <strong>${analysis.weakLabel}</strong>
+                <small>${escapeHtml(analysis.weakText)}</small>
+              </div>
+            </div>
+            <ul class="task-list" aria-label="${subject.name}の3周チェックリスト">
+              ${(subject.tasks || []).map((task, taskIndex) => `
+                <li class="task-item" data-task-index="${taskIndex}">
+                  <span>${escapeHtml(task.label)}</span>
+                  <div class="rounds">${roundButtons(task.checks)}</div>
+                </li>
+              `).join("")}
+            </ul>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderPastExams() {
+      const total = state.pastExams.length;
+      const scored = state.pastExams.filter((exam) => exam.status === "scored" || exam.status === "reviewed").length;
+      const reviewed = state.pastExams.filter((exam) => exam.status === "reviewed").length;
+      const rounds = state.pastExams.reduce((sum, exam) => sum + (Number(exam.rounds) || 0), 0);
+      elements.restartProfile.textContent = state.profile.note;
+      elements.pastExamSummary.textContent = `公式PDFで直近10年分を進めます。演習 ${rounds}/${total * TASK_ROUNDS}周、採点済み ${scored}/${total}、復習済み ${reviewed}/${total}。`;
+      elements.pastExamList.innerHTML = state.pastExams.map((exam, index) => {
+        const done = exam.status === "reviewed" ? " done" : "";
+        return `
+          <div class="past-exam-card${done}" data-exam-index="${index}">
+            <div class="past-exam-title">
+              <strong>${exam.label}</strong>
+              <small>${formatDate(exam.date)} 実施 / 法規</small>
+              <div class="exam-links">
+                <a href="${exam.problemUrl}" target="_blank" rel="noreferrer">問題PDF</a>
+                <a href="${exam.answerUrl}" target="_blank" rel="noreferrer">解答PDF</a>
+              </div>
+              <div class="tag-row"><span class="tag">${examStatusLabel(exam)}</span></div>
+            </div>
+            <label>演習回数
+              <div class="rounds exam-rounds">${roundButtons(exam.rounds || 0, "round-check exam-round-check")}</div>
+            </label>
+            <label>点数
+              <input class="exam-score compact-number" inputmode="decimal" placeholder="例 55" value="${escapeHtml(exam.score)}">
+            </label>
+            <label>復習済み
+              <input class="exam-reviewed" type="checkbox"${exam.status === "reviewed" ? " checked" : ""}>
+            </label>
+            <label>弱点メモ
+              <input class="exam-memo" maxlength="140" placeholder="例 接地・需要率" value="${escapeHtml(exam.memo)}">
+            </label>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderMissions(stats) {
+      const priorities = prioritySubjects().slice(0, 3);
+      if (!priorities.length) {
+        elements.missionList.innerHTML = '<li class="mission-item"><strong>法規爆弾は解除済み</strong><p>完了チェックを外すと、単元別の解除モードに戻ります。</p></li>';
+        return;
+      }
+      const todayHours = Math.max(.5, stats.dailyCapacity);
+      const totalPriority = priorities.reduce((sum, item) => sum + item.priority, 0) || 1;
+      elements.missionList.innerHTML = priorities.map((item) => {
+        const allocation = Math.max(.25, todayHours * item.priority / totalPriority);
+        return `
+          <li class="mission-item">
+            <strong>${item.subject.name}を${hours(allocation)}解除</strong>
+            <div class="tag-row">
+              <span class="tag">残り ${hours(item.need)}</span>
+              <span class="tag${item.analysis.weakCount >= 3 ? " warn" : ""}">${item.analysis.weakLabel}</span>
+            </div>
+            <p>${escapeHtml(item.analysis.weakText || missionText(item.subject))}</p>
+          </li>
+        `;
+      }).join("");
+    }
+
+    function renderRisk() {
+      const priorities = prioritySubjects().slice(0, 4);
+      elements.riskList.innerHTML = priorities.map((item) => `
+        <li class="risk-item">
+          <strong>${item.subject.name}</strong>
+          <div class="bar" aria-hidden="true"><i style="--value:${percent(100 - item.readiness)}"></i></div>
+          <div class="tag-row">
+            <span class="tag">詰まり度 ${percent(100 - item.readiness)}</span>
+            <span class="tag${item.need > 35 ? " danger" : " warn"}">必要 ${hours(item.need)}</span>
+            <span class="tag">${item.analysis.stageLabel}</span>
+          </div>
+          <p>${escapeHtml(item.analysis.weakText || item.subject.focus)}</p>
+        </li>
+      `).join("");
+    }
+
+    function renderTimeline(stats) {
+      const level = riskLevel(stats);
+      const examDate = formatDate(state.examDate);
+      const weekly = formatDate(stats.weeklyBombAt);
+      elements.timelineList.innerHTML = `
+        <li class="timeline-item"><strong>今日</strong><p>${level.label}。まず今日の学習ログを1つ入れる。</p></li>
+        <li class="timeline-item"><strong>${weekly} 23:59</strong><p>次の週次爆弾。この時点までに今週目標 ${hours(state.weeklyHours)} へ近づけます。</p></li>
+        <li class="timeline-item"><strong>${examDate}</strong><p>法規の最終爆発日。ここまでに到達度 ${state.targetReadiness}% 以上を目標にします。</p></li>
+      `;
+    }
+
+    function missionText(subject) {
+      if (subject.id === "electricity_business") return "主任技術者、保安規程、届出の関係をカード化。語句問題で落とさない土台を作ります。";
+      if (subject.id === "technical_standard") return "接地、絶縁、電線路の数値を小分けで暗記。例外条件は過去問に出た形で覚えます。";
+      if (subject.id === "facility_management") return "点検、保守、事故防止を実務の流れで整理。似た用語は表で比較します。";
+      if (subject.id === "related_laws") return "広く浅く拾う単元です。深追いより、過去問で出た語句を確実に回収します。";
+      if (subject.id === "law_calculation") return "需要率、負荷率、不等率、力率改善を定義から固定。今日は小問を連続で解いて型を作ります。";
+      return "過去問を単元別に解き、間違えた条文番号、数値、定義だけを翌日に再解除します。";
+    }
+
+    function updateSubjectFromRow(row, shouldRender = true) {
+      const subject = state.subjects[Number(row.dataset.subjectIndex)];
+      if (!subject) return;
+      syncSubjectCompletion(subject);
+      if (shouldRender) {
+        render();
+      } else {
+        scheduleSave();
+      }
+    }
+
+    function syncSubjectCompletion(subject) {
+      const checklistScore = taskScore(subject);
+      const score = subject.id === "past_questions"
+        ? Math.max(checklistScore, Number(subject.progress) || 0)
+        : checklistScore;
+      subject.progress = Math.round(clamp(score, 0, 100));
+      subject.exempt = score >= 100;
+      const analysis = analyzeSubject(subject);
+      subject.confidence = analysis.confidence;
+      subject.weakCount = analysis.weakCount;
+      subject.weakNote = analysis.weakText.slice(0, 120);
+    }
+
+    function recordStudyLog(subjectId, minutes, result) {
+      const subject = state.subjects.find((item) => item.id === subjectId);
+      if (!subject) return;
+      state.lastLogSubject = subjectId;
+      state.logs.push({ subjectId, minutes, result, date: new Date().toISOString() });
+      state.logs = state.logs.slice(-500);
+      syncSubjectCompletion(subject);
+      render();
+      showToast(`${subject.name}を${minutes}分記録しました。解除率は3周チェックで反映します`);
+    }
+
+    function advanceNextCheck(subjectId) {
+      const subject = state.subjects.find((item) => item.id === subjectId);
+      if (!subject) return;
+      state.lastLogSubject = subjectId;
+      const tasks = subject.tasks || [];
+      if (!tasks.length) {
+        showToast(`${subject.name}には解除項目がありません`);
+        return;
+      }
+      const minChecks = Math.min(...tasks.map((task) => clamp(Number(task.checks) || 0, 0, TASK_ROUNDS)));
+      const task = tasks.find((item) => clamp(Number(item.checks) || 0, 0, TASK_ROUNDS) === minChecks && minChecks < TASK_ROUNDS);
+      if (!task) {
+        showToast(`${subject.name}はすべて解除済みです`);
+        return;
+      }
+      task.checks = clamp((Number(task.checks) || 0) + 1, 0, TASK_ROUNDS);
+      syncSubjectCompletion(subject);
+      render();
+      showToast(`${subject.name}: ${task.label} ${task.checks}/${TASK_ROUNDS}`);
+    }
+
+    function choosePrioritySubject() {
+      const first = prioritySubjects()[0];
+      if (!first) return null;
+      state.lastLogSubject = first.subject.id;
+      render();
+      showToast(`${first.subject.name}を今日の単元にしました`);
+      return first.subject;
+    }
+
+    function scrollToSection(target) {
+      target?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function scheduleSave() {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(saveState, 160);
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function showToast(message) {
+      elements.toast.textContent = message;
+      elements.toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => elements.toast.classList.remove("show"), 1800);
+    }
+
+    function exportCurrentData() {
+      saveState();
+      elements.dataBox.value = JSON.stringify(state, null, 2);
+      elements.dataBox.focus();
+      showToast("JSONを書き出しました");
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function updatePastExamFromRow(row, shouldRender = true) {
+      const exam = state.pastExams[Number(row.dataset.examIndex)];
+      if (!exam) return;
+      exam.score = row.querySelector(".exam-score").value.slice(0, 8);
+      exam.memo = row.querySelector(".exam-memo").value.slice(0, 140);
+      if (row.querySelector(".exam-reviewed").checked) {
+        exam.status = "reviewed";
+      } else {
+        exam.status = exam.score ? "scored" : "working";
+        if (!exam.score && !exam.rounds) exam.status = "not-started";
+      }
+      updatePastQuestionProgress();
+      if (shouldRender) {
+        render();
+      } else {
+        scheduleSave();
+      }
+    }
+
+    function updatePastQuestionProgress() {
+      const pastQuestionUnit = state.subjects.find((subject) => subject.id === "past_questions");
+      if (pastQuestionUnit) {
+        const reviewed = state.pastExams.filter((item) => item.status === "reviewed").length;
+        const scored = state.pastExams.filter((item) => item.status === "scored" || item.status === "reviewed").length;
+        const rounds = state.pastExams.reduce((sum, item) => sum + clamp(Number(item.rounds) || 0, 0, TASK_ROUNDS), 0);
+        const total = Math.max(1, state.pastExams.length);
+        pastQuestionUnit.progress = clamp(Math.round((rounds / (total * TASK_ROUNDS) * .5 + scored / total * .2 + reviewed / total * .3) * 100), 0, 100);
+        syncSubjectCompletion(pastQuestionUnit);
+      }
+    }
+
+    elements.examPreset.addEventListener("change", (event) => {
+      if (event.target.value !== "custom") {
+        state.examDate = event.target.value;
+        render();
+      }
+    });
+
+    elements.examDate.addEventListener("change", (event) => {
+      state.examDate = event.target.value || DEFAULT_STATE.examDate;
+      render();
+    });
+
+    elements.weeklyHours.addEventListener("input", (event) => {
+      state.weeklyHours = clamp(Number(event.target.value) || 1, 1, 80);
+      render();
+    });
+
+    elements.targetReadiness.addEventListener("input", (event) => {
+      state.targetReadiness = clamp(Number(event.target.value) || 72, 50, 95);
+      render();
+    });
+
+    elements.subjectGrid.addEventListener("input", (event) => {
+      const row = event.target.closest(".subject-card");
+      if (!row) return;
+      updateSubjectFromRow(row, false);
+    });
+
+    elements.subjectGrid.addEventListener("change", (event) => {
+      const row = event.target.closest(".subject-card");
+      if (row) updateSubjectFromRow(row);
+    });
+
+    elements.subjectGrid.addEventListener("click", (event) => {
+      const roundButton = event.target.closest(".round-check");
+      const row = event.target.closest(".subject-card");
+      if (!row) return;
+      const subject = state.subjects[Number(row.dataset.subjectIndex)];
+      if (!subject) return;
+      if (roundButton) {
+        const taskRow = event.target.closest(".task-item");
+        const task = subject.tasks?.[Number(taskRow?.dataset.taskIndex)];
+        if (!task) return;
+        const round = clamp(Number(roundButton.dataset.round) || 1, 1, TASK_ROUNDS);
+        task.checks = task.checks >= round ? round - 1 : round;
+        syncSubjectCompletion(subject);
+        render();
+        showToast(`${subject.name}: ${task.label} ${task.checks}/${TASK_ROUNDS}`);
+        return;
+      }
+    });
+
+    elements.pastExamList.addEventListener("input", (event) => {
+      const row = event.target.closest(".past-exam-card");
+      if (!row) return;
+      updatePastExamFromRow(row, false);
+    });
+
+    elements.pastExamList.addEventListener("click", (event) => {
+      const button = event.target.closest(".exam-round-check");
+      const row = event.target.closest(".past-exam-card");
+      if (!button || !row) return;
+      const exam = state.pastExams[Number(row.dataset.examIndex)];
+      if (!exam) return;
+      const round = clamp(Number(button.dataset.round) || 1, 1, TASK_ROUNDS);
+      exam.rounds = exam.rounds >= round ? round - 1 : round;
+      exam.status = exam.status === "reviewed" ? "reviewed" : exam.score ? "scored" : exam.rounds > 0 ? "working" : "not-started";
+      updatePastQuestionProgress();
+      render();
+      showToast(`${exam.label}: 演習 ${exam.rounds}/${TASK_ROUNDS}`);
+    });
+
+    elements.pastExamList.addEventListener("change", (event) => {
+      const row = event.target.closest(".past-exam-card");
+      if (!row) return;
+      updatePastExamFromRow(row, true);
+    });
+
+    elements.logSubject.addEventListener("change", () => {
+      const subjectId = elements.logSubject.value;
+      state.lastLogSubject = subjectId;
+      scheduleSave();
+    });
+
+    elements.addStudyLog.addEventListener("click", () => {
+      const subjectId = elements.logSubject.value;
+      recordStudyLog(subjectId, 60, "solved");
+    });
+
+    elements.advanceNextCheck.addEventListener("click", () => {
+      const subjectId = elements.logSubject.value;
+      advanceNextCheck(subjectId);
+    });
+
+    elements.modeSmart.addEventListener("click", () => {
+      choosePrioritySubject();
+      scrollToSection(elements.logSubject.closest(".study-log-card"));
+    });
+
+    elements.modeUnitList.addEventListener("click", () => {
+      scrollToSection(elements.subjectGrid);
+    });
+
+    elements.modePastExam.addEventListener("click", () => {
+      scrollToSection(elements.pastExamList);
+    });
+
+    elements.modeStats.addEventListener("click", () => {
+      scrollToSection(document.querySelector(".app-progress-panel"));
+    });
+
+    $("#quickWin").addEventListener("click", () => {
+      choosePrioritySubject();
+    });
+
+    $("#saveNow").addEventListener("click", () => {
+      saveState();
+      showToast("保存しました");
+    });
+
+    $("#exportData").addEventListener("click", exportCurrentData);
+    $("#exportDataPanel").addEventListener("click", exportCurrentData);
+
+    $("#importData").addEventListener("click", () => {
+      try {
+        const parsed = JSON.parse(elements.dataBox.value);
+        state = mergeState(structuredClone(DEFAULT_STATE), parsed);
+        saveState();
+        render();
+        showToast("復元しました");
+      } catch {
+        showToast("JSONを読み取れませんでした");
+      }
+    });
+
+    $("#clearDataBox").addEventListener("click", () => {
+      elements.dataBox.value = "";
+    });
+
+    $("#resetData").addEventListener("click", () => {
+      const ok = confirm("爆弾式の学習データを初期状態に戻します。よろしいですか。");
+      if (!ok) return;
+      state = structuredClone(DEFAULT_STATE);
+      saveState();
+      render();
+      showToast("初期化しました");
+    });
+
+    updatePastQuestionProgress();
+    state.subjects.forEach(syncSubjectCompletion);
+    render();
+  </script>
+</body>
+</html>
